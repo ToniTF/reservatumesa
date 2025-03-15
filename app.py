@@ -358,12 +358,12 @@ def restaurant():
                                                time_slots=time_slots, 
                                                reservation_matrix=reservation_matrix)
                     else:
-                        # Vista de lista: Se muestran todas las reservas (excepto canceladas) ordenadas por fecha y hora de forma ascendente
+                        # Vista de lista: Se muestran todas las reservas (incluyendo canceladas) ordenadas por fecha y hora 
                         query = """
                             SELECT r.*, c.username as client_name 
                             FROM reservation r
                             JOIN client c ON r.client_id = c.client_id
-                            WHERE r.restaurant_id = %s AND (r.status != 'cancelada' OR r.status IS NULL)
+                            WHERE r.restaurant_id = %s
                             ORDER BY r.date ASC, r.time ASC
                         """
                         cursor.execute(query, (restaurant['restaurant_id'],))
@@ -514,16 +514,8 @@ def restaurant_reservations(date):
 @app.route('/restaurant/update_reservation_status', methods=['POST'])
 def update_reservation_status():
     if 'username' in session and session.get('user_type') == 'restaurant':
-        reservation_id = int(request.form.get('reservation_id'))
-        action = request.form.get('status')
-        
-        if action == 'confirm':
-            new_status = 'confirmada'
-        elif action == 'reject':
-            new_status = 'cancelada'
-        else:
-            new_status = 'pendiente'
-            
+        reservation_id = request.form.get('reservation_id')
+        new_status = request.form.get('nuevo_estado')  # Debe coincidir con el nombre del campo en el formulario
         date = request.form.get('date')
         
         print(f"Updating reservation {reservation_id} to status {new_status}")

@@ -172,9 +172,12 @@
                                     <td>{{ reservation.time }}</td>
                                     <td>{{ reservation.client_name }}</td>
                                     <td>{{ reservation.diners }} personas</td>
+                                    <!-- Modifica la parte donde se muestra el estado de las reservas -->
                                     <td>
                                         {% if reservation.status == 'confirmada' %}
                                             <span class="status-confirmed">Confirmada</span>
+                                        {% elif reservation.status == 'pendiente' %}
+                                            <span class="status-pending">Pendiente</span>
                                         {% elif reservation.status == 'cancelada' %}
                                             <span class="status-rejected">Cancelada</span>
                                         {% else %}
@@ -182,26 +185,27 @@
                                         {% endif %}
                                     </td>
                                     <td class="action-buttons">
-                                        {% if reservation.status != 'confirmada' %}
-                                        <form action="/restaurant/update_reservation_status" method="POST" class="reservation-form">
-                                            <input type="hidden" name="reservation_id" value="{{ reservation.reservation_id }}">
-                                            <input type="hidden" name="status" value="confirm">
-                                            <input type="hidden" name="date" value="{{ selected_date }}">
-                                            <button type="button" class="btn btn-success btn-sm" onclick="openConfirmationModal(this.form, 'confirm')">
-                                                <i class="bi bi-check-lg"></i> Confirmar
-                                            </button>
-                                        </form>
-                                        {% endif %}
-                                        
                                         {% if reservation.status != 'cancelada' %}
-                                        <form action="/restaurant/update_reservation_status" method="POST" class="reservation-form">
-                                            <input type="hidden" name="reservation_id" value="{{ reservation.reservation_id }}">
-                                            <input type="hidden" name="status" value="reject">
-                                            <input type="hidden" name="date" value="{{ selected_date }}">
-                                            <button type="button" class="btn btn-danger btn-sm" onclick="openConfirmationModal(this.form, 'reject')">
-                                                <i class="bi bi-x-lg"></i> Rechazar
-                                            </button>
-                                        </form>
+                                            <!-- Solo mostrar botones de acción para reservas no canceladas -->
+                                            <form action="/restaurant/update_reservation_status" method="POST" class="d-inline-block">
+                                                <input type="hidden" name="reservation_id" value="{{ reservation.reservation_id }}">
+                                                <input type="hidden" name="date" value="{{ selected_date }}">
+                                                {% if reservation.status != 'confirmada' %}
+                                                    <button type="button" class="btn btn-sm btn-success" 
+                                                            onclick="openConfirmationModal(this.form, 'confirm')">
+                                                        <i class="bi bi-check-circle"></i> Confirmar
+                                                    </button>
+                                                {% endif %}
+                                                {% if reservation.status != 'cancelada' %}
+                                                    <button type="button" class="btn btn-sm btn-danger" 
+                                                            onclick="openConfirmationModal(this.form, 'reject')">
+                                                        <i class="bi bi-x-circle"></i> Cancelar
+                                                    </button>
+                                                {% endif %}
+                                            </form>
+                                        {% else %}
+                                            <!-- Para reservas canceladas, solo mostrar un mensaje o dejar vacío -->
+                                            <span class="text-white">No disponible</span>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -243,11 +247,33 @@
     <script>
         let pendingForm = null;
         let modalInstance = null;
+        let actionType = null;  // Para almacenar el tipo de acción (confirmar o rechazar)
+        
         document.addEventListener('DOMContentLoaded', function() {
             const modalElem = document.getElementById('actionModal');
             modalInstance = new bootstrap.Modal(modalElem);
+            
+            // Modificar este evento para añadir el campo nuevo_estado
             document.getElementById('confirmActionButton').addEventListener('click', function(){
                 if(pendingForm) {
+                    // Crear y añadir el campo nuevo_estado
+                    const statusField = document.createElement('input');
+                    statusField.type = 'hidden';
+                    statusField.name = 'nuevo_estado';
+                    
+                    // Establecer el valor según la acción
+                    if (actionType === 'confirm') {
+                        statusField.value = 'confirmada';
+                    } else {
+                        statusField.value = 'cancelada';
+                    }
+                    
+                    // Añadir el campo al formulario
+                    pendingForm.appendChild(statusField);
+                    
+                    console.log(`Enviando estado: ${statusField.value}`);
+                    
+                    // Enviar el formulario
                     pendingForm.submit();
                 }
             });
@@ -255,6 +281,8 @@
 
         function openConfirmationModal(form, action) {
             pendingForm = form;
+            actionType = action;  // Guardar la acción para usarla después
+            
             const modalBody = document.getElementById('actionModalBody');
             modalBody.textContent = action === 'confirm' ? "¿Confirmar esta reserva?" : "¿Rechazar esta reserva?";
             modalInstance.show();

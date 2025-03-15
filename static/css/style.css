@@ -1,0 +1,1860 @@
+:root {
+    /* Bold, vibrant color scheme */
+    --primary-color: #FF2E63;
+    --secondary-color: #00C2A8;
+    --accent-color: #FFBE0B;
+    --dark-color: #252A34;
+    --light-color: #EAEAEA;
+    --transition-speed: 0.3s;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    /* Bold gradient background (original) */
+    background: linear-gradient(135deg, #8A2BE2, #4D4DFF);
+    padding: 20px;
+    min-height: 100vh;
+    color: white;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Geometric decorative elements */
+body::before,
+body::after {
+    content: '';
+    position: fixed;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Large pink circle */
+body::before {
+    width: 350px;
+    height: 350px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    top: -150px;
+    right: -100px;
+    opacity: 0.2;
+    animation: rotate-scale 20s linear infinite;
+}
+
+/* Pink triangle */
+body::after {
+    width: 0;
+    height: 0;
+    border-left: 180px solid transparent;
+    border-right: 180px solid transparent;
+    border-bottom: 320px solid var(--primary-color);
+    bottom: -200px;
+    left: -100px;
+    opacity: 0.15;
+    transform-origin: center;
+    animation: float-rotate 30s ease-in-out infinite alternate;
+}
+
+/* Pink geometric shapes */
+.geo-shape {
+    position: fixed;
+    z-index: -1;
+    opacity: 0.2;
+    pointer-events: none;
+}
+
+.geo-square {
+    width: 100px;
+    height: 100px;
+    background-color: var(--primary-color);
+    right: 15%;
+    top: 40%;
+    transform: rotate(45deg);
+    animation: pulse-rotate 15s ease-in-out infinite alternate;
+}
+
+.geo-rect {
+    width: 200px;
+    height: 60px;
+    background-color: var(--primary-color);
+    left: 60%;
+    bottom: 20%;
+    transform: rotate(-20deg);
+    animation: float-shape 18s ease-in-out infinite;
+}
+
+.geo-circle {
+    width: 150px;
+    height: 150px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    left: 10%;
+    top: 30%;
+    transform: scale(0.8);
+    animation: scale-fade 12s ease-in-out infinite alternate;
+}
+
+/* Pink dotted pattern */
+.geo-dots {
+    position: fixed;
+    width: 300px;
+    height: 300px;
+    right: 5%;
+    bottom: 5%;
+    z-index: -2;
+    opacity: 0.2;
+    background-image: radial-gradient(var(--primary-color) 2px, transparent 2px);
+    background-size: 20px 20px;
+    transform: rotate(10deg);
+    animation: float-dots 25s ease-in-out infinite alternate;
+}
+
+/* Segundo patrón de puntos en otra ubicación */
+.geo-dots-alt {
+    left: 25%;
+    top: 15%;
+    right: auto;
+    bottom: auto;
+    width: 250px;
+    height: 250px;
+    background-size: 15px 15px; /* Puntos más pequeños */
+    transform: rotate(-5deg);
+    animation: float-dots-alt 20s ease-in-out infinite alternate;
+}
+
+/* Animación personalizada para el segundo patrón */
+@keyframes float-dots-alt {
+    0% { transform: rotate(-5deg) translateY(0); opacity: 0.15; }
+    50% { transform: rotate(-8deg) translateY(-15px); opacity: 0.25; }
+    100% { transform: rotate(0deg) translateY(10px); opacity: 0.15; }
+}
+
+/* Animations for geometric elements */
+@keyframes rotate-scale {
+    0% { transform: rotate(0) scale(1); }
+    50% { transform: rotate(180deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes float-rotate {
+    0% { transform: translateY(0) rotate(0); }
+    50% { transform: translateY(-30px) rotate(5deg); }
+    100% { transform: translateY(20px) rotate(-5deg); }
+}
+
+@keyframes pulse-rotate {
+    0% { transform: rotate(45deg) scale(1); }
+    50% { transform: rotate(90deg) scale(1.2); }
+    100% { transform: rotate(45deg) scale(1); }
+}
+
+@keyframes float-shape {
+    0%, 100% { transform: rotate(-20deg) translateY(0); }
+    50% { transform: rotate(-15deg) translateY(-20px); }
+}
+
+@keyframes scale-fade {
+    0% { transform: scale(0.8); opacity: 0.15; }
+    50% { transform: scale(1.1); opacity: 0.25; }
+    100% { transform: scale(0.8); opacity: 0.15; }
+}
+
+@keyframes float-dots {
+    0% { transform: rotate(10deg) translateY(0); }
+    50% { transform: rotate(5deg) translateY(-20px); }
+    100% { transform: rotate(15deg) translateY(10px); }
+}
+
+/* Header styling with more fun elements */
+h1, h2, h3 {
+    color: white;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    width: 70%;
+    height: 6px;
+    background-color: var(--accent-color);
+    bottom: -10px;
+    left: 0;
+    border-radius: 3px;
+    transform: scaleX(0) rotate(-2deg);
+    transform-origin: left;
+    animation: slide-in 1s forwards;
+}
+
+@keyframes slide-in {
+    to {
+        transform: scaleX(1) rotate(-2deg);
+    }
+}
+
+/* Navigation and links */
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: all var(--transition-speed);
+}
+
+a:hover {
+    color: white;
+    transform: translateY(-2px);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+/* Buttons styling - taller, more vibrant */
+.btn, button {
+    background-color: var(--primary-color);
+    border: none;
+    color: white;
+    padding: 16px 30px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: all 0.4s ease;
+    text-decoration: none;
+    display: inline-block;
+    margin: 12px 0;
+    text-transform: uppercase;
+    box-shadow: 0 8px 20px rgba(255, 46, 99, 0.4);
+    letter-spacing: 1px;
+}
+
+.btn:hover, button:hover {
+    background-color: var(--accent-color);
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 12px 25px rgba(255, 190, 11, 0.5);
+    color: var(--dark-color);
+}
+
+/* Make all links within buttons white */
+button a {
+    color: white;
+    text-decoration: none;
+}
+
+button a:hover {
+    color: white;
+}
+
+/* Button icon styling - yellow by default, pink on hover */
+.btn i.bi-arrow-right-circle-fill,
+.btn i.bi-building-fill-add {
+    color: var(--accent-color);
+    transition: all 0.3s ease;
+}
+
+.btn:hover i.bi-arrow-right-circle-fill,
+.btn:hover i.bi-building-fill-add {
+    color: var(--primary-color);
+}
+
+/* Make sure button text stays white */
+.btn {
+    color: white;
+}
+
+/* Restaurant cards */
+.restaurant-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transition: all var(--transition-speed);
+    margin-bottom: 20px;
+    overflow: hidden;
+    border: none;
+}
+
+.restaurant-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.restaurant-details {
+    padding: 1.5rem;
+    position: relative;
+}
+
+.restaurant-name {
+    color: var(--dark-color);
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.restaurant-info {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.restaurant-info li {
+    padding: 8px 0;
+    position: relative;
+    padding-left: 30px;
+}
+
+.restaurant-info li::before {
+    content: '→';
+    color: var(--accent-color);
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+/* Forms styling */
+form {
+    background-color: #FFEB3B; /* Bright yellow background */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    margin: 0 auto;
+    border: 3px solid var(--accent-color); /* Thicker accent border */
+    position: relative;
+    transform: rotate(-1deg); /* Slight rotation for playful effect */
+    transition: transform 0.3s ease;
+}
+
+form:hover {
+    transform: rotate(0deg) scale(1.02);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+}
+
+form::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    border: 2px dashed var(--primary-color);
+    border-radius: 15px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+form label {
+    font-weight: 600;
+    color: var(--dark-color);
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 8px;
+}
+
+form input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    transition: border var(--transition-speed);
+}
+
+form input:focus {
+    border-color: var(--secondary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
+}
+
+/* Multi-step form styling */
+.step-indicators {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    position: relative;
+    pointer-events: none;
+}
+
+.step-indicators::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.3);
+    z-index: -1;
+    transform: translateY(-50%);
+}
+
+.step {
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50px;
+    padding: 10px 15px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    position: relative;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    border: 2px solid transparent;
+}
+
+.step.active {
+    background: var(--accent-color);
+    color: var(--dark-color);
+    transform: scale(1.1);
+    border-color: white;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+}
+
+.form-step {
+    display: none;
+    animation: fadeIn 0.5s;
+}
+
+.form-step.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.form-navigation {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.form-navigation button {
+    flex: 1;
+}
+
+.prev-step {
+    background-color: var(--secondary-color);
+}
+
+.next-step {
+    background-color: var(--accent-color);
+    color: var(--dark-color);
+}
+
+input.invalid, textarea.invalid {
+    border: 2px solid #ff4d4f;
+    background-color: rgba(255, 77, 79, 0.1);
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.validation-message {
+    background-color: #ff4d4f;
+    animation: message-wobble 0.7s ease-in-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .step {
+        font-size: 0.7rem;
+        padding: 8px 10px;
+    }
+    
+    .form-navigation {
+        flex-direction: column;
+    }
+}
+
+/* Home page elements - more playful styling */
+.home-options {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.home-option {
+    padding: 50px 30px;
+    background-color: #FFEB3B; /* Changed to match form yellow background */
+    border-radius: 10px; /* Match form's border-radius */
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Match form's shadow */
+    transition: all 0.4s ease;
+    height: 100%;
+    transform: rotate(-1deg);
+    border: 3px solid var(--accent-color); /* Thicker accent border like forms */
+    position: relative; /* Required for ::before positioning */
+}
+
+.home-option:nth-child(even) {
+    transform: rotate(1deg);
+}
+
+.home-option::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    border: 2px dashed var(--primary-color);
+    border-radius: 15px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.home-option:hover {
+    transform: translateY(-15px) rotate(0);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+    border-color: var(--accent-color);
+}
+
+.home-option h2 {
+    color: var(--dark-color);
+    font-size: 2rem;
+    text-shadow: none;
+}
+
+.home-option p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.home-option i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+    text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
+}
+
+/* Message styling - Updated to be more modern and bold */
+.message {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 18px;
+    border-radius: 12px;
+    margin: 25px 0;
+    position: relative;
+    transform: rotate(-1deg);
+    box-shadow: 0 8px 20px rgba(255, 46, 99, 0.4);
+    border-left: 5px solid var(--accent-color);
+    animation: message-wobble 0.7s ease-in-out, glow-pulse 3s infinite;
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+.message::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 2px dashed var(--accent-color);
+    border-radius: 15px;
+    pointer-events: none;
+    z-index: -1;
+    animation: border-zoom 3s ease-in-out infinite;
+}
+
+.message i {
+    font-size: 1.3rem;
+    color: var(--accent-color);
+    animation: bounce-icon 1.5s infinite ease-in-out;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+@keyframes message-wobble {
+    0% { transform: rotate(-3deg) translateY(-20px); opacity: 0; }
+    50% { transform: rotate(2deg) translateY(10px); opacity: 0.7; }
+    100% { transform: rotate(-1deg) translateY(0); opacity: 1; }
+}
+
+@keyframes bounce-icon {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-4px) scale(1.2); }
+}
+
+@keyframes border-zoom {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 8px 20px rgba(255, 46, 99, 0.4); }
+    50% { box-shadow: 0 12px 28px rgba(255, 190, 11, 0.6); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .home-options {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .home-option {
+        width: 90%;
+        margin-bottom: 30px;
+        padding: 40px 20px;
+    }
+    
+    form {
+        padding: 20px;
+        width: 90%;
+    }
+
+    .btn, button {
+        width: 100%;
+    }
+}
+
+/* Loading animation for page transitions */
+.page-transition {
+    animation: zoom-fade 0.7s ease-in-out;
+}
+
+@keyframes zoom-fade {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Customize Bootstrap elements */
+.navbar {
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.list-group-item {
+    border-left: 5px solid transparent;
+    transition: all var(--transition-speed);
+}
+
+.list-group-item:hover {
+    border-left-color: var(--accent-color);
+    background-color: rgba(255, 209, 102, 0.1);
+}
+
+/* Add some food-themed icons */
+.food-icon::before {
+    font-family: "Bootstrap-icons";
+    margin-right: 8px;
+    color: var(--primary-color);
+}
+
+.food-icon.restaurant::before { content: "🍽️"; }
+.food-icon.phone::before { content: "📞"; }
+.food-icon.address::before { content: "📍"; }
+.food-icon.website::before { content: "🌐"; }
+
+/* Enhanced Button animations */
+.button-bounce {
+    transition: transform 0.4s ease;
+}
+
+.button-bounce:hover {
+    transform: translateY(-8px) scale(1.08);
+    animation: enhanced-bounce 1s infinite;
+}
+
+@keyframes enhanced-bounce {
+    0%, 100% {
+        transform: translateY(-8px) scale(1.08);
+    }
+    50% {
+        transform: translateY(-15px) scale(1.08);
+    }
+}
+
+/* Fix Button Pulse animation - only activate on hover */
+.button-pulse {
+    transition: all 0.4s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.button-pulse:before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    transform: scale(1);
+    /* Remove the continuous animation */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.button-pulse:hover {
+    animation: enhanced-pulse 1.5s infinite;
+}
+
+/* Add animation to :before element only on hover */
+.button-pulse:hover:before {
+    opacity: 1;
+    animation: ripple 2s infinite;
+}
+
+@keyframes enhanced-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 194, 168, 0.8);
+    }
+    70% {
+        box-shadow: 0 0 0 15px rgba(0, 194, 168, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 194, 168, 0);
+    }
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* Logo Styling with Modern Font - consolidated from two separate declarations */
+.logo-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    pointer-events: none; /* So it doesn't interfere with clicks */
+}
+
+.logo-circle {
+    width: 320px;
+    height: 320px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    position: absolute;
+    left: -180px;
+    top: -180px;
+    z-index: -1;
+    transform: translateX(-100px) scale(0.5);
+    animation: circle-slide 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
+    opacity: 0;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 0.9;
+    transform: translateX(-100px);
+    animation: text-slide 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards, 
+               logo-bounce 5s ease-in-out 2s infinite;
+    opacity: 0;
+    margin-left: 15px;
+}
+
+.logo-text span {
+    font-family: 'Fredoka One', cursive;
+    font-weight: 400;
+    font-size: 2.2rem;
+    color: var(--accent-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 3px 3px 0px var(--primary-color), 
+                 5px 5px 0px rgba(0, 0, 0, 0.5);
+    transform: rotate(-5deg);
+    display: block;
+}
+
+.logo-text span:last-child {
+    transform: rotate(-2deg);
+    margin-top: -5px;
+}
+
+@keyframes circle-slide {
+    0% {
+        transform: translateX(-100px) scale(0.5);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0) scale(1);
+        opacity: 0.9;
+    }
+}
+
+@keyframes text-slide {
+    0% {
+        transform: translateX(-100px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes logo-bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Responsive logo - consolidated from two separate declarations */
+@media (max-width: 768px) {
+    .logo-circle {
+        width: 200px;
+        height: 200px;
+        left: -120px;
+        top: -120px;
+    }
+    
+    .logo-text {
+        margin-left: 10px;
+    }
+    
+    .logo-text span {
+        font-size: 1.6rem;
+        letter-spacing: 1px;
+    }
+    
+    /* Added consolidated responsive styling for buttons and containers */
+    .back-container, .logout-container {
+        top: 15px;
+        right: 15px;
+    }
+    
+    .back-btn, .logout-btn {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .restaurant-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Logout and Back button styles - updated for scrolling with content */
+.logout-container, .back-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    z-index: 100;
+}
+
+.logout-btn, .back-btn {
+    padding: 12px 24px;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.logout-btn {
+    background-color: var(--primary-color);
+    box-shadow: 0 6px 15px rgba(255, 46, 99, 0.4);
+}
+
+.back-btn {
+    background-color: var(--secondary-color);
+    box-shadow: 0 6px 15px rgba(0, 194, 168, 0.4);
+}
+
+.logout-btn:hover, .back-btn:hover {
+    background-color: var(--accent-color);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(255, 190, 11, 0.5);
+}
+
+.logout-btn i, .back-btn i {
+    margin-right: 8px;
+}
+
+/* Responsive adjustments for button containers */
+@media (max-width: 768px) {
+    .logout-container {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .logout-btn, .back-btn {
+        padding: 8px 15px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Restaurant list styling - consolidated duplicate properties */
+.restaurant-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-gap: 25px;
+    margin-top: 30px;
+}
+
+.restaurant-item {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.4s ease;
+    border-left: 5px solid var(--accent-color);
+    backdrop-filter: blur(5px);
+    position: relative;
+    padding-top: 35px;
+    display: flex;
+    flex-direction: column;
+    min-height: 350px;
+}
+
+.restaurant-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    border-left: 5px solid var(--primary-color);
+}
+
+.restaurant-content {
+    padding: 25px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding-bottom: 90px;
+    flex-grow: 1;
+    min-height: 250px;
+}
+
+/* Consolidated styling for h3 elements with shared properties */
+.restaurant-content h3, .restaurant-item .restaurant-header h3 {
+    color: white;
+    font-weight: 700;
+    width: 100%;
+    text-align: center;
+    text-shadow: 
+        2px 2px 0 #000,
+        -2px 2px 0 #000,
+        2px -2px 0 #000,
+        -2px -2px 0 #000,
+        0px 2px 0 #000,
+        0px -2px 0 #000,
+        -2px 0px 0 #000,
+        2px 0px 0 #000,
+         4px 4px 6px rgba(0, 0, 0, 0.8);
+}
+
+.restaurant-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    margin-top: -40px;
+    padding: 6px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+ 
+}
+
+/* Botón "Ver" en home.html - oculto por defecto */
+.restaurant-content .btn {
+    margin-top: auto;
+    margin-bottom: -8px;
+    align-self: center;
+    padding: 12px 25px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+    border: 2px solid white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Mostrar el botón al pasar el ratón por encima de la tarjeta */
+.restaurant-item:hover .restaurant-content .btn {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Restaurant header styling with specific overrides */
+.restaurant-item .restaurant-header {
+    width: 100%;
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
+    padding: 10px;
+    backdrop-filter: blur(2px);
+}
+
+.restaurant-item .restaurant-header h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    padding: 0;
+    background-color: transparent;
+}
+
+/* Consolidated reservation details styling */
+.restaurant-item .reservation-details {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0 25px;
+    width: 100%;
+    backdrop-filter: blur(3px);
+    margin-bottom: 10px;
+}
+
+.restaurant-item .reservation-details p {
+    color: white;
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.restaurant-item .reservation-details i {
+    color: var(--accent-color);
+    width: 20px;
+    display: inline-block;
+    text-align: center;
+    margin-right: 5px;
+}
+
+/* Consolidated badge styling */
+.restaurant-item .badge {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    border-radius: 20px;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+    position: static;
+}
+
+/* Consolidated reservation actions styling - Updated to hide buttons by default */
+.restaurant-item .reservation-actions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    padding: 0 25px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.restaurant-item:hover .reservation-actions {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.restaurant-item .reservation-actions .btn {
+    flex: 1;
+    padding: 8px 10px;
+    font-size: 0.9rem;
+    white-space: nowrap; /* Prevent text from wrapping */
+    min-width: 0; /* Allow flex items to shrink below content size */
+    overflow: hidden; /* Hide overflowing content */
+    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ensure restaurant item has sufficient width */
+.restaurant-item {
+    min-width: 280px; /* Ensure minimum width for card */
+}
+
+/* Add responsive adjustments for buttons on small screens */
+@media (max-width: 350px) {
+    .restaurant-item .reservation-actions {
+        flex-direction: column; /* Stack buttons vertically on very small screens */
+        padding: 0 15px;
+    }
+    
+    .restaurant-item .reservation-actions .btn {
+        margin-bottom: 5px;
+    }
+    
+    .restaurant-item {
+        min-height: 380px; /* Increase height to accommodate stacked buttons */
+    }
+}
+
+/* Reservation status badge styling */
+.restaurant-item .reservation-status {
+    position: absolute;
+    left: 50%;
+    top: 5px;
+    transform: translateX(-50%);
+    z-index: 10;
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    border-radius: 20px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+}
+
+/* Estilos para modales - inspirados en restaurant.html */
+.modal-dialog {
+    max-width: 550px;
+    margin: 1.75rem auto;
+}
+
+.modal-content {
+    background-color: #FFEB3B;
+    padding: 0;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    border: 3px solid var(--accent-color);
+    position: relative;
+    transform: rotate(0deg);
+    transition: all 0.4s ease;
+    overflow: hidden;
+}
+
+/* Borde punteado decorativo alrededor del modal */
+.modal-content::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    border: 2px dashed var(--primary-color);
+    border-radius: 15px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.modal-header {
+    background-color: var(--accent-color);
+    border-bottom: 3px solid var(--primary-color);
+    padding: 20px 25px;
+    position: relative;
+}
+
+.modal-title {
+    color: var(--dark-color);
+    font-weight: 700;
+    font-size: 1.6rem;
+    margin: 0 auto;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.modal-header .btn-close {
+    background-color: white;
+    opacity: 1;
+    padding: 10px;
+    margin: 0;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.modal-header .btn-close:hover {
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.modal-body {
+    padding: 25px 30px;
+    color: var(--dark-color);
+}
+
+.modal-body label {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--dark-color);
+    margin-bottom: 10px;
+    display: block;
+}
+
+.modal-body input,
+.modal-body select,
+.modal-body textarea {
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 12px 15px;
+    width: 100%;
+    font-size: 1rem;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) inset;
+    transition: all 0.3s ease;
+}
+
+.modal-body input:focus,
+.modal-body select:focus,
+.modal-body textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 46, 99, 0.2);
+    outline: none;
+}
+
+.modal-body p {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    color: var(--dark-color);
+    text-align: center;
+    font-weight: 500;
+    margin: 15px 0;
+}
+
+.modal-footer {
+    border-top: 3px solid var(--primary-color);
+    padding: 20px 25px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 15px;
+    
+}
+
+.modal-footer .btn {
+    padding: 12px 20px;
+    min-width: 120px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.modal-footer .btn-secondary {
+    background-color: var(--secondary-color);
+    border: none;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 194, 168, 0.4);
+}
+
+.modal-footer .btn-danger {
+    background-color: var(--primary-color);
+    border: none;
+    color: white;
+    box-shadow: 0 4px 10px rgba(255, 46, 99, 0.4);
+}
+
+.modal-footer form {
+    margin: 0;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    border: none;
+    transform: none;
+}
+
+.modal-footer form:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.modal-footer form:before {
+    display: none;
+}
+
+.modal-footer .btn-danger:hover {
+    background-color: #ff0044;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(255, 0, 68, 0.5);
+}
+
+.modal-footer .btn-secondary:hover {
+    background-color: #00a58e;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 165, 142, 0.5);
+}
+
+.modal-footer .button-pulse {
+    background-color: var(--accent-color);
+    color: var(--dark-color);
+    box-shadow: 0 4px 10px rgba(255, 190, 11, 0.4);
+}
+
+.modal-footer .button-pulse:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(255, 190, 11, 0.6);
+}
+
+/* Efecto de apertura y backdrop estilizado */
+.modal.show .modal-dialog {
+    animation: modal-wobble 0.5s ease-out;
+}
+
+@keyframes modal-wobble {
+    0% { opacity: 0; transform: scale(0.8) translateY(30px); }
+    70% { transform: scale(1.05) translateY(-10px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-backdrop.show {
+    opacity: 0.8;
+    backdrop-filter: blur(5px);
+}
+
+/* Animaciones de hover para el modal */
+.modal-content:hover {
+    animation: modal-hover-wobble 0.8s ease-in-out;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    border-color: var(--primary-color);
+}
+
+@keyframes modal-hover-wobble {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(1deg) scale(1.01); }
+    50% { transform: rotate(-0.5deg) scale(1.02); }
+    75% { transform: rotate(0.5deg) scale(1.01); }
+}
+
+.modal-content:hover::before {
+    animation: modal-hover-glow 1.5s infinite;
+}
+
+@keyframes modal-hover-glow {
+    0%, 100% { box-shadow: 0 8px 20px rgba(255, 46, 99, 0.6); }
+    50% { box-shadow: 0 8px 25px rgba(255, 190, 11, 0.8); }
+}
+
+/* Adaptaciones responsivas */
+@media (max-width: 768px) {
+    .modal-dialog {
+        margin: 1rem;
+        width: calc(100% - 2rem);
+    }
+    
+    .modal-title {
+        font-size: 1.3rem;
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+        padding: 15px 20px;
+    }
+    
+    .modal-footer .btn {
+        width: 100%;
+        margin: 5px 0;
+    }
+}
+
+/* Reservation Table Styling - Updated with darker background */
+.reservation-table {
+    background-color: rgba(37, 42, 52, 0.7) !important; /* Darker background using dark-color variable with opacity */
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+    margin-top: 30px;
+    border: none;
+    border-left: 5px solid var(--accent-color); /* Matching border style with cards */
+}
+
+.reservation-table thead th {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 15px;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.reservation-table tbody tr {
+    background-color: rgba(255, 255, 255, 0.03); /* Much more subtle transparency */
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.reservation-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 2;
+}
+
+/* Override Bootstrap table styles */
+.table {
+    --bs-table-bg: transparent !important;
+    --bs-table-accent-bg: transparent !important;
+}
+
+/* Status indicators */
+.status-confirmed, 
+.status-rejected, 
+.status-pending {
+    display: inline-block;
+    padding: 8px 15px;
+    border-radius: 50px;
+    font-weight: 600;
+    text-align: center;
+    width: 110px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.status-confirmed {
+    background-color: #22c55e;
+    color: white;
+    animation: status-pulse-green 2s infinite;
+}
+
+.status-rejected {
+    background-color: #ef4444;
+    color: white;
+}
+
+.status-pending {
+    background-color: var(--accent-color);
+    color: var(--dark-color);
+    animation: status-pulse-yellow 2s infinite;
+}
+
+@keyframes status-pulse-green {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+    50% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+}
+
+@keyframes status-pulse-yellow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 190, 11, 0.7); }
+    50% { box-shadow: 0 0 0 8px rgba(255, 190, 11, 0); }
+}
+
+/* Action buttons container */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.action-buttons form {
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    box-shadow: none;
+    transform: none;
+}
+
+.action-buttons form:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.action-buttons form::before {
+    display: none;
+}
+
+.action-buttons .btn {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.action-buttons .btn-success {
+    background-color: #22c55e;
+    border: none;
+    box-shadow: 0 3px 6px rgba(34, 197, 94, 0.3);
+}
+
+.action-buttons .btn-danger {
+    background-color: var(--primary-color);
+    border: none;
+    box-shadow: 0 3px 6px rgba(255, 46, 99, 0.3);
+}
+
+.action-buttons .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Date selector styling */
+.date-selector {
+    margin: 15px 0;
+    padding: 5px;
+
+}
+
+.date-selector .input-group {
+    max-width: 100%;
+    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 50px;
+}
+
+.date-selector input[type="date"] {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 2px solid var(--accent-color);
+    border-radius: 50px 0 0 50px;
+    padding: 10px 15px;
+    font-weight: 500;
+    color: var(--dark-color);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1) inset;
+}
+
+.date-selector input[type="date"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 46, 99, 0.25);
+}
+
+.date-selector .btn {
+    border-radius: 0 50px 50px 0;
+    margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .reservation-table {
+        font-size: 0.85rem;
+    }
+    
+    .reservation-table td, 
+    .reservation-table th {
+        padding: 10px 8px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .status-confirmed, 
+    .status-rejected, 
+    .status-pending {
+        padding: 5px 8px;
+        font-size: 0.8rem;
+        width: 90px;
+    }
+}
+
+/* Estilos mejorados para la tabla de reservaciones */
+.table-container {
+    max-width: 100%;
+    overflow-x: auto;
+    margin: 30px 0;
+    padding: 5px;
+    border-radius: 15px;
+    background: rgba(37, 42, 52, 0.3);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.reservation-table {
+    width: 100%;
+    min-width: 800px;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: rgba(37, 42, 52, 0.7);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos para el encabezado de la tabla */
+.reservation-table thead th {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 15px 8px;
+    font-weight: 600;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Columna de hora */
+.time-slot {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 15px;
+    font-weight: 600;
+    text-align: center;
+    width: 100px;
+    position: sticky;
+    left: 0;
+    z-index: 5;
+}
+
+/* Columnas de asientos */
+.seat-column {
+    width: calc((100% - 100px) / var(--total-seats, 10));
+    min-width: 35px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    text-align: center;
+}
+
+/* Filas de la tabla */
+.reservation-table tbody tr {
+    transition: background-color 0.3s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.reservation-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Celda de descanso */
+.break-time {
+    background-color: rgba(0, 0, 0, 0.3);
+    color: var(--light-color);
+    text-align: center;
+    padding: 10px;
+    font-style: italic;
+}
+
+/* Celdas de reservación */
+.reservation-cell {
+    background-color: var(--secondary-color);
+    color: white;
+    text-align: center;
+    padding: 8px 5px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 2px solid white;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.reservation-cell:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    z-index: 15;
+}
+
+/* Estilos para reservas pendientes y confirmadas */
+.reservation-pending {
+    background-color: var(--accent-color);
+    color: var(--dark-color);
+    animation: pulse-pending 2s infinite;
+}
+
+.reservation-confirmed {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+@keyframes pulse-pending {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(255, 190, 11, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(255, 190, 11, 0);
+    }
+}
+
+/* Información de capacidad */
+.capacity-info {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 16px 20px;
+    border-radius: 30px;
+    margin: 15px auto;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border-left: 5px solid var(--accent-color);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transform: scale(1);
+    transition: all 0.3s ease;
+}
+
+.capacity-info:hover {
+    transform: scale(1.03);
+    border-left-color: var(--primary-color);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Información de capacidad más compacta */
+.capacity-info {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 10px 15px;
+    border-radius: 30px;
+    margin: 0 auto;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border-left: 5px solid var(--accent-color);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transform: scale(1);
+    transition: all 0.3s ease;
+    width: fit-content;
+}
+
+.capacity-info:hover {
+    transform: scale(1.03);
+    border-left-color: var(--primary-color);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Mejoras responsivas */
+@media (max-width: 768px) {
+    .capacity-info {
+        margin: 20px auto;
+    }
+    
+    /* Alineación responsive para el layout de 3 columnas */
+    .col-md-5, .col-md-3, .col-md-4 {
+        text-align: center !important;
+        margin-bottom: 15px;
+    }
+    
+    .col-md-4 .btn {
+        width: auto;
+        display: inline-block;
+    }
+}
+
+/* Mejoras responsivas para la tabla */
+@media (max-width: 768px) {
+    .reservation-table {
+        min-width: 600px;
+    }
+    
+    .time-slot {
+        width: 80px;
+        padding: 12px 5px;
+        font-size: 0.85rem;
+    }
+    
+    .seat-column {
+        min-width: 25px;
+        font-size: 0.8rem;
+    }
+    
+    .reservation-cell {
+        font-size: 0.8rem;
+        padding: 5px 2px;
+    }
+    
+    .date-selector {
+        padding: 0 10px;
+    }
+    
+    .capacity-info {
+        margin-top: 25px;
+    }
+}
+
+/* Mejora para la selección de fecha */
+.date-selector {
+    margin: 15px 0;
+    padding: 5px;
+
+}
+
+.date-selector .input-group {
+    max-width: 100%;
+    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 50px;
+}
+
+.date-selector .btn {
+    margin: 0;
+}
+
+/* Estilos para alineación horizontal de controles */
+.date-selector {
+    margin: 0;
+    padding: 5px;
+}
+
+.date-selector .input-group {
+    max-width: 100%;
+    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 50px;
+}
+
+/* Capacity info con margen ajustado para alineación */
+.capacity-info {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 10px 15px;
+    border-radius: 30px;
+    margin: 10px auto;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border-left: 5px solid var(--accent-color);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transform: scale(1);
+    transition: all 0.3s ease;
+    width: fit-content;
+    display: inline-block;
+}
+
+/* Ajuste para el botón de detalles de reservas */
+.col-md-4 .btn.button-pulse {
+    margin-top: 10px; /* Ajustar para alineación vertical */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .date-selector, .capacity-info, .col-md-4 .btn.button-pulse {
+        margin-bottom: 15px;
+    }
+    
+    /* Centrar todos los elementos en vista móvil */
+    .col-md-4, .col-md-3 {
+        text-align: center !important;
+    }
+    
+    /* Hacer que los botones sean del mismo ancho en móvil */
+    .col-md-4 .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+/* New styling for the restaurant name in booking page */
+.restaurant-display-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 10px 15px;
+    border-radius: 8px;
+    border-left: 5px solid var(--accent-color);
+    margin-top: 5px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.restaurant-display-name:hover {
+    border-left-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+}

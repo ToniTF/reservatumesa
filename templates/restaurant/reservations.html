@@ -167,44 +167,43 @@
                             </thead>
                             <tbody>
                                 {% for reservation in reservations %}
-                                <tr>
+                                <tr data-reservation-id="{{ reservation.reservation_id }}">
                                     <td>{{ reservation.date }}</td>
                                     <td>{{ reservation.time }}</td>
                                     <td>{{ reservation.client_name }}</td>
                                     <td>{{ reservation.diners }} personas</td>
-                                    <!-- Modifica la parte donde se muestra el estado de las reservas -->
                                     <td>
                                         {% if reservation.status == 'confirmada' %}
-                                            <span class="status-confirmed">Confirmada</span>
+                                            <span class="reservation-status status-confirmed">Confirmada</span>
                                         {% elif reservation.status == 'pendiente' %}
-                                            <span class="status-pending">Pendiente</span>
+                                            <span class="reservation-status status-pending">Pendiente</span>
                                         {% elif reservation.status == 'cancelada' %}
-                                            <span class="status-rejected">Cancelada</span>
+                                            <span class="reservation-status status-rejected">Cancelada</span>
                                         {% else %}
-                                            <span class="status-pending">Pendiente</span>
+                                            <span class="reservation-status status-pending">Pendiente</span>
                                         {% endif %}
                                     </td>
                                     <td class="action-buttons">
                                         {% if reservation.status != 'cancelada' %}
-                                            <!-- Solo mostrar botones de acción para reservas no canceladas -->
+                                            <!-- botones para reservas activas -->
                                             <form action="/restaurant/update_reservation_status" method="POST" class="d-inline-block">
                                                 <input type="hidden" name="reservation_id" value="{{ reservation.reservation_id }}">
                                                 <input type="hidden" name="date" value="{{ selected_date }}">
                                                 {% if reservation.status != 'confirmada' %}
-                                                    <button type="button" class="btn btn-sm btn-success" 
-                                                            onclick="openConfirmationModal(this.form, 'confirm')">
-                                                        <i class="bi bi-check-circle"></i> Confirmar
-                                                    </button>
+                                                <button type="button" class="btn btn-sm btn-success"
+                                                    onclick="openConfirmationModal(this.form, 'confirm')">
+                                                    <i class="bi bi-check-circle"></i> Confirmar
+                                                </button>
                                                 {% endif %}
                                                 {% if reservation.status != 'cancelada' %}
-                                                    <button type="button" class="btn btn-sm btn-danger" 
-                                                            onclick="openConfirmationModal(this.form, 'reject')">
-                                                        <i class="bi bi-x-circle"></i> Cancelar
-                                                    </button>
+                                                <button type="button" class="btn btn-sm btn-danger"
+                                                    onclick="openConfirmationModal(this.form, 'reject')">
+                                                    <i class="bi bi-x-circle"></i> Cancelar
+                                                </button>
                                                 {% endif %}
                                             </form>
                                         {% else %}
-                                            <!-- Para reservas canceladas, solo mostrar un mensaje o dejar vacío -->
+                                            <!-- Reservas canceladas: no mostrar acciones -->
                                             <span class="text-white">No disponible</span>
                                         {% endif %}
                                     </td>
@@ -324,6 +323,116 @@
             }
         };
     </script>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Crear el objeto de audio para la notificación
+    const notificationSound = new Audio("{{ url_for('static', filename='sounds/notification.mp3') }}");
+
+    // Función para obtener el estado de las reservas de la página
+    function getReservationStates() {
+        let states = [];
+        // Suponemos que en tu tabla tienes agregado un atributo data-reservation-id en cada <tr>
+        // Y que el estado se muestra en un elemento con la clase "reservation-status"
+        const rows = document.querySelectorAll('.reservation-table tbody tr');
+        rows.forEach(row => {
+            let reservationId = row.getAttribute('data-reservation-id');
+            let statusElem = row.querySelector('.reservation-status');
+            let status = statusElem ? statusElem.textContent.trim().toLowerCase() : '';
+            if (reservationId) {
+                states.push({ id: reservationId, status: status });
+            }
+        });
+        return states;
+    }
+
+    // Obtener el estado actual de las reservas
+    const currentStates = getReservationStates();
+
+    // Recuperar estados previos del sessionStorage (si existen)
+    const previousStatesJSON = sessionStorage.getItem('prevReservationStates');
+    let stateChanged = false;
+
+    if (previousStatesJSON) {
+        const previousStates = JSON.parse(previousStatesJSON);
+        // Comparar cada reserva del estado actual con el anterior
+        currentStates.forEach(current => {
+            const prev = previousStates.find(r => r.id === current.id);
+            if (!prev || prev.status !== current.status) {
+                stateChanged = true;
+            }
+        });
+    } else {
+        // Si no había un estado previo, se guarda el actual sin reproducir sonido
+        stateChanged = false;
+    }
+
+    // Si se detecta un cambio en el estado, reproducir el sonido de notificación
+    if (stateChanged) {
+        notificationSound.volume = 0.7;
+        notificationSound.play().catch(error => console.error("Error al reproducir el sonido:", error));
+    }
+
+    // Guardar el estado actual para la próxima comparación
+    sessionStorage.setItem('prevReservationStates', JSON.stringify(currentStates));
+});
+</script>
+
+    <script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Crear el objeto de audio para la notificación
+    const notificationSound = new Audio("{{ url_for('static', filename='sounds/notification.mp3') }}");
+
+    // Función para obtener los estados actuales de las reservas
+    function getReservationStates() {
+        let states = [];
+        // Se asume que cada <tr> tiene data-reservation-id y que el <span> en la celda Estado tiene la clase .reservation-status
+        const rows = document.querySelectorAll('.reservation-table tbody tr');
+        rows.forEach(row => {
+            let reservationId = row.getAttribute('data-reservation-id');
+            let statusElem = row.querySelector('td:nth-child(5) .reservation-status');
+            let status = statusElem ? statusElem.textContent.trim().toLowerCase() : '';
+            if (reservationId) {
+                states.push({ id: reservationId, status: status });
+            }
+        });
+        return states;
+    }
+
+    // Obtener el estado actual de las reservas
+    const currentStates = getReservationStates();
+
+    // Recuperar el estado previo del sessionStorage (si existe)
+    let previousStates = sessionStorage.getItem("prevReservationStates");
+    let stateChanged = false;
+
+    if (previousStates) {
+        try {
+            previousStates = JSON.parse(previousStates);
+            // Comparar cada reserva del estado actual con la versión previa
+            currentStates.forEach(current => {
+                const prev = previousStates.find(r => r.id === current.id);
+                if (!prev || prev.status !== current.status) {
+                    stateChanged = true;
+                }
+            });
+        } catch (error) {
+            console.error("Error al parsear prevReservationStates:", error);
+        }
+    }
+
+    // Si se detecta un cambio, reproducir el sonido
+    if (stateChanged) {
+        notificationSound.volume = 0.7; // Ajusta el volumen si es necesario
+        notificationSound.play().catch(error => {
+            console.error("Error al reproducir el sonido:", error);
+        });
+    }
+
+    // Guardar el estado actual para la próxima comparación
+    sessionStorage.setItem("prevReservationStates", JSON.stringify(currentStates));
+});
+</script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     

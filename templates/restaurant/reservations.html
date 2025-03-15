@@ -67,12 +67,18 @@
                                 </a>
                             </div>
                         </form>
+                        <!-- Añade este div después del formulario de fecha pero antes de la tabla -->
+                        <div id="dateWarning" class="alert alert-warning date-warning" style="display: none; margin-top: 10px;">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            Por favor, selecciona una fecha primero.
+                        </div>
                         <script>
                             // Verificar si hay una fecha seleccionada al cargar la página
                             document.addEventListener('DOMContentLoaded', function() {
                                 const dateInput = document.querySelector('input[name="date"]');
                                 const viewReservationsBtn = document.getElementById('viewReservationsBtn');
                                 const viewCalendarBtn = document.getElementById('viewCalendarBtn');
+                                const dateWarning = document.getElementById('dateWarning');
                                 
                                 // Función para actualizar el estado visual de los botones
                                 function updateButtonStates() {
@@ -92,13 +98,30 @@
                                         // Restaurar las funciones originales
                                         viewReservationsBtn.onclick = navigateToDate;
                                         viewCalendarBtn.onclick = navigateToCalendar;
+                                        
+                                        // Ocultar el mensaje de advertencia si estaba visible
+                                        dateWarning.style.display = 'none';
                                     }
                                 }
                                 
-                                // Función que muestra el mensaje de alerta
+                                // Función que muestra el mensaje de advertencia
                                 function showDateNeededMessage(event) {
                                     event.preventDefault();
-                                    alert("Por favor, selecciona una fecha primero.");
+                                    
+                                    // Mostrar el mensaje de advertencia
+                                    dateWarning.style.display = 'block';
+                                    
+                                    // Aplicar animación para llamar la atención
+                                    dateWarning.classList.add('shake-animation');
+                                    
+                                    // Después de un tiempo, quitar la animación
+                                    setTimeout(() => {
+                                        dateWarning.classList.remove('shake-animation');
+                                    }, 500);
+                                    
+                                    // Enfocar el campo de fecha
+                                    dateInput.focus();
+                                    
                                     return false;
                                 }
                                 
@@ -286,6 +309,26 @@
             border-color: #6c757d !important; 
             opacity: 0.65;
             cursor: not-allowed;
+        }
+        
+        /* Estilo para el mensaje de advertencia */
+        .date-warning {
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Animación para llamar la atención */
+        .shake-animation {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
         }
         
         /* Resto de los estilos... */

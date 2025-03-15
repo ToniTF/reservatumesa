@@ -56,10 +56,10 @@
                             
                             <!-- Botones dentro del formulario -->
                             <div class="d-flex justify-content-center gap-3">
-                                <button type="button" class="btn button-pulse" onclick="navigateToDate()">
+                                <button type="button" id="viewReservationsBtn" class="btn button-pulse" onclick="navigateToDate()">
                                     <i class="bi bi-calendar-check"></i> Ver reservas
                                 </button>
-                                <button type="button" class="btn button-pulse" onclick="navigateToCalendar()">
+                                <button type="button" id="viewCalendarBtn" class="btn button-pulse" onclick="navigateToCalendar()">
                                     <i class="bi bi-calendar3"></i> Ver calendario
                                 </button>
                                 <a href="/restaurant" class="btn button-pulse">
@@ -68,11 +68,38 @@
                             </div>
                         </form>
                         <script>
+                            // Verificar si hay una fecha seleccionada al cargar la página
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const dateInput = document.querySelector('input[name="date"]');
+                                const viewReservationsBtn = document.getElementById('viewReservationsBtn');
+                                const viewCalendarBtn = document.getElementById('viewCalendarBtn');
+                                
+                                // Función para actualizar el estado visual de los botones
+                                function updateButtonStates() {
+                                    if (!dateInput.value) {
+                                        viewReservationsBtn.classList.add('disabled');
+                                        viewCalendarBtn.classList.add('disabled');
+                                    } else {
+                                        viewReservationsBtn.classList.remove('disabled');
+                                        viewCalendarBtn.classList.remove('disabled');
+                                    }
+                                }
+                                
+                                // Actualizar el estado inicial
+                                updateButtonStates();
+                                
+                                // Actualizar el estado cuando cambie la fecha
+                                dateInput.addEventListener('change', updateButtonStates);
+                            });
+
                             function navigateToDate() {
                                 const dateInput = document.querySelector('input[name="date"]');
                                 const selectedDate = dateInput.value;
                                 if (selectedDate) {
                                     window.location.href = `/restaurant/reservations/${selectedDate}`;
+                                } else {
+                                    // Mostrar mensaje de alerta
+                                    alert("Por favor, selecciona una fecha primero.");
                                 }
                             }
                             
@@ -81,6 +108,9 @@
                                 const selectedDate = dateInput.value;
                                 if (selectedDate) {
                                     window.location.href = `/restaurant?date=${selectedDate}`;
+                                } else {
+                                    // Mostrar mensaje de alerta
+                                    alert("Por favor, selecciona una fecha primero.");
                                 }
                             }
                         </script>
@@ -201,6 +231,15 @@
     
     <!-- Add some animation to table rows -->
     <style>
+        /* Estilos para botones deshabilitados */
+        .button-pulse.disabled {
+            background-color: #6c757d !important; /* Color gris oscuro */
+            border-color: #6c757d !important; 
+            opacity: 0.65;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
         .reservation-table tbody tr {
             transition: all 0.3s ease;
             animation: fadeIn 0.6s ease-out;

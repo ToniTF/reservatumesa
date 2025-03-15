@@ -184,29 +184,34 @@
                                         {% endif %}
                                     </td>
                                     <td class="action-buttons">
-                                        {% if reservation.status != 'cancelada' %}
-                                            <!-- botones para reservas activas -->
-                                            <form action="/restaurant/update_reservation_status" method="POST" class="d-inline-block">
-                                                <input type="hidden" name="reservation_id" value="{{ reservation.reservation_id }}">
-                                                <input type="hidden" name="date" value="{{ selected_date }}">
-                                                {% if reservation.status != 'confirmada' %}
-                                                <button type="button" class="btn btn-sm btn-success"
-                                                    onclick="openConfirmationModal(this.form, 'confirm')">
-                                                    <i class="bi bi-check-circle"></i> Confirmar
-                                                </button>
-                                                {% endif %}
-                                                {% if reservation.status != 'cancelada' %}
-                                                <button type="button" class="btn btn-sm btn-danger"
-                                                    onclick="openConfirmationModal(this.form, 'reject')">
-                                                    <i class="bi bi-x-circle"></i> Cancelar
-                                                </button>
-                                                {% endif %}
-                                            </form>
-                                        {% else %}
-                                            <!-- Reservas canceladas: no mostrar acciones -->
-                                            <span class="text-white">No disponible</span>
-                                        {% endif %}
-                                    </td>
+    {% if reservation.status != 'cancelada' %}
+        <!-- botones para reservas activas -->
+        <form action="/restaurant/update_reservation_status" method="POST" class="d-inline-block">
+            <input type="hidden" name="reservation_id" value="{{ reservation.reservation_id }}">
+            <input type="hidden" name="date" value="{{ selected_date }}">
+            {% if reservation.status != 'confirmada' %}
+            <button type="button" class="btn btn-sm btn-success"
+                onclick="openConfirmationModal(this.form, 'confirm')">
+                <i class="bi bi-check-circle"></i> Confirmar
+            </button>
+            {% endif %}
+            {% if reservation.status != 'cancelada' %}
+            <button type="button" class="btn btn-sm btn-danger"
+                onclick="openConfirmationModal(this.form, 'reject')">
+                <i class="bi bi-x-circle"></i> Cancelar
+            </button>
+            {% endif %}
+        </form>
+    {% else %}
+        <!-- Reserva cancelada: mostrar botón para eliminar el registro -->
+        <form action="/restaurant/delete_reservation/{{ reservation.reservation_id }}" method="POST" class="d-inline-block">
+            <input type="hidden" name="date" value="{{ selected_date }}">
+            <button type="submit" class="btn btn-sm btn-danger">
+                <i class="bi bi-trash"></i> Eliminar
+            </button>
+        </form>
+    {% endif %}
+</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

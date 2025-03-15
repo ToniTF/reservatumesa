@@ -562,7 +562,33 @@ def update_reservation_status():
     else:
         return redirect(url_for('login_pageRest'))
     
+@app.route('/restaurant/delete_reservation/<int:reservation_id>', methods=['POST'])
+def delete_reservation(reservation_id):
+    # Verificar que el usuario (restaurante) está logueado
+    if 'username' not in session or session.get('user_type') != 'restaurant':
+        return redirect(url_for('login_pageRest'))
     
+    connection = db.get_connection()
+    try:
+        with connection.cursor() as cursor:
+            # Validar que la reserva está en estado cancelada
+            verify_query = "SELECT status FROM reservation WHERE reservation_id = %s"
+            cursor.execute(verify_query, (reservation_id,))
+            result = cursor.fetchone()
+            if not result or result['status'] != 'cancelada':
+                return redirect(url_for('restaurant'))
+            
+            # Eliminar la reserva
+            delete_query = "DELETE FROM reservation WHERE reservation_id = %s"
+            cursor.execute(delete_query, (reservation_id,))
+            connection.commit()
+        return redirect(url_for('restaurant'))
+    except Exception as e:
+        print("Error al eliminar reserva:", e)
+        connection.rollback()
+        return redirect(url_for('restaurant'))
+    finally:
+        connection.close()
 
 # ------------- Parte de Booking -------------
 

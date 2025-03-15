@@ -18,6 +18,53 @@
         :root {
             --total-seats: {{ restaurant.capacity }};
         }
+
+        /* Ajuste responsive para botones */
+        .btn.button-pulse {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 110px;
+        }
+        
+        /* Ajuste para iconos en botones */
+        .btn.button-pulse i {
+            margin-right: 0.4rem;
+            font-size: 0.9rem;
+        }
+        
+        /* Estilos para dispositivos móviles */
+        @media (max-width: 768px) {
+            .d-flex.justify-content-center.gap-3 {
+                flex-direction: column;
+                gap: 0.5rem !important;
+            }
+            
+            .btn.button-pulse {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+        
+        /* Estilos para tablets y pantallas más pequeñas */
+        @media (min-width: 769px) and (max-width: 992px) {
+            .btn.button-pulse {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.85rem;
+                min-width: 100px;
+            }
+        }
+        
+        /* Estilos para botones visualmente deshabilitados (pero permitiendo hacer clic) */
+        .visually-disabled {
+            background-color: #6c757d !important; /* Color gris oscuro */
+            border-color: #6c757d !important; 
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 
@@ -75,12 +122,12 @@
                                 
                                 <!-- Botones agrupados debajo del selector -->
                                 <div class="d-flex justify-content-center gap-3">
-                                    <button type="submit" class="btn button-pulse">
+                                    <a href="#" onclick="viewReservations()" class="btn button-pulse">
                                         <i class="bi bi-calendar-check"></i> Reservas
-                                    </button>
-                                    <a href="#" onclick="viewCalendar()" class="btn button-pulse">
-                                        <i class="bi bi-list-ul"></i> Calendario
                                     </a>
+                                    <button type="submit" class="btn button-pulse">
+                                        <i class="bi bi-calendar3"></i> Calendario
+                                    </button>
                                     <a href="/restaurant" class="btn button-pulse">
                                         <i class="bi bi-list-check"></i> Todas
                                     </a>
@@ -94,7 +141,21 @@
                                     if (selectedDate) {
                                         window.location.href = `/restaurant?date=${selectedDate}`;
                                     } else {
-                                        alert("Por favor, selecciona una fecha.");
+                                        // Mostrar mensaje de advertencia
+                                        alert("Por favor, selecciona una fecha primero.");
+                                        dateInput.focus();
+                                    }
+                                }
+                                
+                                function viewReservations() {
+                                    const dateInput = document.querySelector('input[name="date"]');
+                                    const selectedDate = dateInput.value;
+                                    if (selectedDate) {
+                                        window.location.href = `/restaurant/reservations/${selectedDate}`;
+                                    } else {
+                                        // Mostrar mensaje de advertencia
+                                        alert("Por favor, selecciona una fecha primero.");
+                                        dateInput.focus();
                                     }
                                 }
                             </script>

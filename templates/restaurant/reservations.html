@@ -77,12 +77,29 @@
                                 // Función para actualizar el estado visual de los botones
                                 function updateButtonStates() {
                                     if (!dateInput.value) {
-                                        viewReservationsBtn.classList.add('disabled');
-                                        viewCalendarBtn.classList.add('disabled');
+                                        // Añadir solo la clase visual pero no la clase disabled real
+                                        viewReservationsBtn.classList.add('visually-disabled');
+                                        viewCalendarBtn.classList.add('visually-disabled');
+                                        
+                                        // Asignar manejadores de eventos específicos para cuando están deshabilitados
+                                        viewReservationsBtn.onclick = showDateNeededMessage;
+                                        viewCalendarBtn.onclick = showDateNeededMessage;
                                     } else {
-                                        viewReservationsBtn.classList.remove('disabled');
-                                        viewCalendarBtn.classList.remove('disabled');
+                                        // Cuando hay fecha, quitar la clase visual y restaurar el comportamiento normal
+                                        viewReservationsBtn.classList.remove('visually-disabled');
+                                        viewCalendarBtn.classList.remove('visually-disabled');
+                                        
+                                        // Restaurar las funciones originales
+                                        viewReservationsBtn.onclick = navigateToDate;
+                                        viewCalendarBtn.onclick = navigateToCalendar;
                                     }
+                                }
+                                
+                                // Función que muestra el mensaje de alerta
+                                function showDateNeededMessage(event) {
+                                    event.preventDefault();
+                                    alert("Por favor, selecciona una fecha primero.");
+                                    return false;
                                 }
                                 
                                 // Actualizar el estado inicial
@@ -97,9 +114,6 @@
                                 const selectedDate = dateInput.value;
                                 if (selectedDate) {
                                     window.location.href = `/restaurant/reservations/${selectedDate}`;
-                                } else {
-                                    // Mostrar mensaje de alerta
-                                    alert("Por favor, selecciona una fecha primero.");
                                 }
                             }
                             
@@ -108,9 +122,6 @@
                                 const selectedDate = dateInput.value;
                                 if (selectedDate) {
                                     window.location.href = `/restaurant?date=${selectedDate}`;
-                                } else {
-                                    // Mostrar mensaje de alerta
-                                    alert("Por favor, selecciona una fecha primero.");
                                 }
                             }
                         </script>
@@ -268,5 +279,15 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.03); }
         }
+
+        /* Estilos para botones visualmente deshabilitados (pero permitiendo hacer clic) */
+        .visually-disabled {
+            background-color: #6c757d !important; /* Color gris oscuro */
+            border-color: #6c757d !important; 
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+        
+        /* Resto de los estilos... */
     </style>
 </body></html>

@@ -370,6 +370,16 @@
             100% { transform: translateX(0); }
         }
         
+        /* Cambiar solo el color de texto en las celdas de la tabla a blanco */
+        .table.reservation-table tbody td {
+            color: white;
+        }
+        
+        /* Mantener los colores originales para los estados */
+        .status-confirmed, .status-pending, .status-rejected {
+            /* No cambiar estos colores */
+        }
+        
         /* Resto de los estilos... */
     </style>
 </body></html>

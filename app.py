@@ -121,31 +121,25 @@ def login_pageRest():
         
 @app.route('/restaurant',methods=['POST'])
 def loginRest():
-    #obtener los datos del formulario
+    # obtener los datos del formulario
     username = request.form['username'] 
     password = request.form['password']
-    #creamos la connection
     connection = db.get_connection()
     try:
         with connection.cursor() as cursor:
-            #creamos la query - solo buscamos por username
             query = "SELECT * FROM restaurant WHERE username = %s"
             data = (username,)
             cursor.execute(query, data)
             user = cursor.fetchone()
             if user:
-                # Verificamos la contraseña con bcrypt
                 stored_password = user['password'].encode('utf-8')
                 if bcrypt.checkpw(password.encode('utf-8'), stored_password):
-                    #guardar datos en session
                     session['username'] = username
                     session['user_type'] = 'restaurant'
-                    session['restaurant_id'] = user['restaurant_id']  # Añadir el ID del restaurante
-                    session['restaurant_name'] = user['restaurant_name']  # Añadir el nombre del restaurante
-                    # Redirecting to reservations page with today's date
-                    from datetime import date
-                    today = date.today().isoformat()
-                    return redirect(url_for('restaurant_reservations', date=today))
+                    session['restaurant_id'] = user['restaurant_id']
+                    session['restaurant_name'] = user['restaurant_name']
+                    # REDIRECCION sin parámetro de fecha para que se muestre la vista de lista
+                    return redirect(url_for('restaurant'))
                 else:
                     return render_template("restaurant/login_restaurant.html", message="Usuario o contraseña incorrecta")
             else:
@@ -264,156 +258,128 @@ def registered_restaurant():
 @app.route('/restaurant')
 def restaurant():
     if 'username' in session and session.get('user_type') == 'restaurant':
-        # Get the logged in restaurant information
         connection = db.get_connection()
         try:
             with connection.cursor() as cursor:
-                # Get restaurant data
+                # Obtener datos del restaurante
                 query = "SELECT * FROM restaurant WHERE username = %s"
-                data = (session['username'],)
-                cursor.execute(query, data)
+                cursor.execute(query, (session['username'],))
                 restaurant = cursor.fetchone()
                 
                 if restaurant:
-                    # Get date from query params or use today
-                    from datetime import datetime, date
-                    selected_date = request.args.get('date', date.today().isoformat())
+                    # Si se pasa una fecha en la URL, usar vista de calendario
+                    selected_date = request.args.get('date')
                     
-                    # Get reservations for this restaurant on selected date
-                    query = """
-                        SELECT r.*, c.username as client_name 
-                        FROM reservation r
-                        JOIN client c ON r.client_id = c.client_id
-                        WHERE r.restaurant_id = %s AND r.date = %s
-                    """
-                    cursor.execute(query, (restaurant['restaurant_id'], selected_date))
-                    all_reservations = cursor.fetchall()
-                    
-                    print(f"Found {len(all_reservations)} reservations for date {selected_date}")
-                    
-                    # Define time slots
-                    lunch_slots = ["13:00", "13:30", "14:00", "14:30", "15:00"]
-                    dinner_slots = ["20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00"]
-                    time_slots = lunch_slots + ["break"] + dinner_slots
-                    
-                    # Create a reservation matrix (time_slot -> seat_index -> reservation)
-                    reservation_matrix = {}
-                    
-                    for time_slot in time_slots:
-                        if time_slot != "break":
-                            reservation_matrix[time_slot] = {}
-                    
-                    # Create a mapping for time slot sequences (each reservation spans 4 slots)
-                    time_slot_mapping = {
-                        "13:00": ["13:00", "13:30", "14:00", "14:30"],
-                        "13:30": ["13:30", "14:00", "14:30", "15:00"],
-                        "14:00": ["14:00", "14:30", "15:00"],
-                        "14:30": ["14:30", "15:00"],
-                        "15:00": ["15:00"],
-                        "20:00": ["20:00", "20:30", "21:00", "21:30"],
-                        "20:30": ["20:30", "21:00", "21:30", "22:00"],
-                        "21:00": ["21:00", "21:30", "22:00", "22:30"],
-                        "21:30": ["21:30", "22:00", "22:30", "23:00"],
-                        "22:00": ["22:00", "22:30", "23:00"],
-                        "22:30": ["22:30", "23:00"],
-                        "23:00": ["23:00"]
-                    }
-                    
-                    # Improved algorithm for processing reservations to fit into the matrix
-                    # Sort reservations by time to ensure consistent placement
-                    from operator import itemgetter
-                    all_reservations = sorted(all_reservations, key=itemgetter('time'))
-                    
-                    for reservation in all_reservations:
-                        # Get status with a default value if it doesn't exist
-                        status = reservation.get('status', 'pendiente')
+                    if selected_date:
+                        # Vista de calendario para la fecha especificada
+                        query = """
+                            SELECT r.*, c.username as client_name 
+                            FROM reservation r
+                            JOIN client c ON r.client_id = c.client_id
+                            WHERE r.restaurant_id = %s AND r.date = %s 
+                              AND (r.status != 'cancelada' OR r.status IS NULL)
+                            ORDER BY r.time
+                        """
+                        cursor.execute(query, (restaurant['restaurant_id'], selected_date))
+                        all_reservations = cursor.fetchall()
                         
-                        if status != 'cancelada':  # Skip rejected/canceled reservations
-                            # Convert time to string format
-                            if hasattr(reservation['time'], 'strftime'):
-                                res_time = reservation['time'].strftime('%H:%M')
-                            else:
-                                # Handle potential different time formats
-                                time_str = str(reservation['time'])
-                                # Strip seconds if they exist
-                                if len(time_str) > 5:  # e.g. "13:00:00"
-                                    res_time = time_str[:5]
+                        # Definir franjas (ejemplo para lunch y cena)
+                        lunch_slots = ["13:00", "13:30", "14:00", "14:30", "15:00"]
+                        dinner_slots = ["20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00"]
+                        time_slots = lunch_slots + ["break"] + dinner_slots
+                        
+                        # Inicializar matriz: cada franja (excepto "break") tiene un diccionario de asientos ocupados
+                        reservation_matrix = {slot: {} for slot in time_slots if slot != "break"}
+                        
+                        # Mapeo de franjas para reservas que ocupan varios intervalos
+                        time_slot_mapping = {
+                            "13:00": ["13:00", "13:30", "14:00", "14:30"],
+                            "13:30": ["13:30", "14:00", "14:30", "15:00"],
+                            "14:00": ["14:00", "14:30", "15:00"],
+                            "14:30": ["14:30", "15:00"],
+                            "15:00": ["15:00"],
+                            "20:00": ["20:00", "20:30", "21:00", "21:30"],
+                            "20:30": ["20:30", "21:00", "21:30", "22:00"],
+                            "21:00": ["21:00", "21:30", "22:00", "22:30"],
+                            "21:30": ["21:30", "22:00", "22:30", "23:00"],
+                            "22:00": ["22:00", "22:30", "23:00"],
+                            "22:30": ["22:30", "23:00"],
+                            "23:00": ["23:00"]
+                        }
+                        
+                        from operator import itemgetter
+                        all_reservations = sorted(all_reservations, key=itemgetter('time'))
+                        for reservation in all_reservations:
+                            status = reservation.get('status', 'pendiente')
+                            if status != 'cancelada':
+                                if hasattr(reservation['time'], 'strftime'):
+                                    res_time = reservation['time'].strftime('%H:%M')
                                 else:
-                                    res_time = time_str
-                            
-                            print(f"Processing reservation at time: {res_time}")
-                            
-                            # Check if this time is in our defined slots
-                            if res_time in reservation_matrix:
-                                # Find first available seat index for this reservation
-                                found_spot = False
+                                    time_str = str(reservation['time'])
+                                    res_time = time_str[:5] if len(time_str) > 5 else time_str
                                 
-                                # Improved algorithm: Find the highest occupied seat index
-                                # for all affected time slots to determine the next available seat
-                                affected_slots = time_slot_mapping.get(res_time, [res_time])
-                                start_seat = 0
-                                
-                                while start_seat < restaurant['capacity'] and not found_spot:
-                                    all_slots_available = True
-                                    max_occupied_seat = start_seat - 1  # Track the highest occupied seat
-                                    
-                                    for slot in affected_slots:
-                                        if slot not in reservation_matrix:
-                                            continue
-                                        
-                                        # Check if there's enough space in this time slot
-                                        for i in range(reservation['diners']):
-                                            seat_idx = start_seat + i
-                                            
-                                            if seat_idx >= restaurant['capacity']:
-                                                all_slots_available = False
-                                                break
-                                                
-                                            # If seat is occupied, find the furthest occupied seat
-                                            if seat_idx in reservation_matrix[slot]:
-                                                all_slots_available = False
-                                                
-                                                # Find the end of this existing reservation
-                                                existing_res = reservation_matrix[slot][seat_idx]
-                                                existing_end = seat_idx
-                                                
-                                                # Find the last seat of this existing reservation
-                                                for j in range(1, existing_res['diners']):
-                                                    if seat_idx + j in reservation_matrix[slot] and reservation_matrix[slot][seat_idx + j] == existing_res:
-                                                        existing_end = seat_idx + j
-                                                
-                                                # Update the max occupied seat if this one extends further
-                                                max_occupied_seat = max(max_occupied_seat, existing_end)
-                                                break
-                                        
-                                        if not all_slots_available:
-                                            break
-                                    
-                                    if all_slots_available:
-                                        # We found a spot! Reserve it in all affected time slots
+                                if res_time in reservation_matrix:
+                                    found_spot = False
+                                    affected_slots = time_slot_mapping.get(res_time, [res_time])
+                                    start_seat = 0
+                                    while start_seat < restaurant['capacity'] and not found_spot:
+                                        all_slots_available = True
+                                        max_occupied_seat = start_seat - 1
                                         for slot in affected_slots:
-                                            if slot in reservation_matrix:
-                                                # Mark all seats for this reservation
-                                                for i in range(reservation['diners']):
-                                                    reservation_matrix[slot][start_seat + i] = reservation
-                                        found_spot = True
-                                    else:
-                                        # Skip to after the furthest occupied seat
-                                        start_seat = max_occupied_seat + 1
-                    
-                    return render_template('restaurant/home.html', 
-                                          restaurant=restaurant,
-                                          time_slots=time_slots,
-                                          reservation_matrix=reservation_matrix,
-                                          selected_date=selected_date)
+                                            if slot not in reservation_matrix:
+                                                continue
+                                            for i in range(reservation['diners']):
+                                                seat_idx = start_seat + i
+                                                if seat_idx >= restaurant['capacity'] or seat_idx in reservation_matrix[slot]:
+                                                    all_slots_available = False
+                                                    existing_res = reservation_matrix[slot].get(seat_idx)
+                                                    existing_end = seat_idx
+                                                    if existing_res:
+                                                        for j in range(1, existing_res['diners']):
+                                                            if (seat_idx + j in reservation_matrix[slot] and 
+                                                                reservation_matrix[slot][seat_idx + j] == existing_res):
+                                                                existing_end = seat_idx + j
+                                                    max_occupied_seat = max(max_occupied_seat, existing_end)
+                                                    break
+                                            if not all_slots_available:
+                                                break
+                                        if all_slots_available:
+                                            for slot in affected_slots:
+                                                if slot in reservation_matrix:
+                                                    for i in range(reservation['diners']):
+                                                        reservation_matrix[slot][start_seat + i] = reservation
+                                            found_spot = True
+                                        else:
+                                            start_seat = max_occupied_seat + 1
+                                            
+                        return render_template("restaurant/home.html", 
+                                               restaurant=restaurant, 
+                                               selected_date=selected_date, 
+                                               time_slots=time_slots, 
+                                               reservation_matrix=reservation_matrix)
+                    else:
+                        # Vista de lista: Se muestran todas las reservas (excepto canceladas) ordenadas por fecha y hora de forma ascendente
+                        query = """
+                            SELECT r.*, c.username as client_name 
+                            FROM reservation r
+                            JOIN client c ON r.client_id = c.client_id
+                            WHERE r.restaurant_id = %s AND (r.status != 'cancelada' OR r.status IS NULL)
+                            ORDER BY r.date ASC, r.time ASC
+                        """
+                        cursor.execute(query, (restaurant['restaurant_id'],))
+                        reservations = cursor.fetchall()
+                        
+                        return render_template("restaurant/reservations.html", 
+                                               restaurant=restaurant, 
+                                               reservations=reservations,
+                                               selected_date="Todas")
                 else:
-                    # Something went wrong with the session data
                     session.pop('username', None)
                     session.pop('user_type', None)
                     return redirect(url_for('home'))
         except Exception as e:
-            print("Ocurrió un error al conectar a la bbdd: ", e)
-            return render_template("home.html", message="Error de conexión a la base de datos")
+            print("Ocurrió un error al cargar reservas:", e)
+            return render_template("home.html", message="Error al cargar reservas")
         finally:
             connection.close()
             print("Conexión cerrada")
@@ -549,10 +515,8 @@ def restaurant_reservations(date):
 def update_reservation_status():
     if 'username' in session and session.get('user_type') == 'restaurant':
         reservation_id = int(request.form.get('reservation_id'))
-        # Map the status values from the form to the actual enum values in the database
         action = request.form.get('status')
         
-        # Convert to the correct ENUM value
         if action == 'confirm':
             new_status = 'confirmada'
         elif action == 'reject':
@@ -567,7 +531,6 @@ def update_reservation_status():
         connection = db.get_connection()
         try:
             with connection.cursor() as cursor:
-                # First verify this reservation belongs to the logged in restaurant
                 verify_query = """
                     SELECT r.*, rest.username 
                     FROM reservation r
@@ -580,7 +543,6 @@ def update_reservation_status():
                 print(f"Verification result: {result}")
                 
                 if result and result['username'] == session['username']:
-                    # Update the reservation status
                     update_query = "UPDATE reservation SET status = %s WHERE reservation_id = %s"
                     cursor.execute(update_query, (new_status, reservation_id))
                     rows_affected = cursor.rowcount
@@ -588,7 +550,12 @@ def update_reservation_status():
                     
                     print(f"Status updated successfully to {new_status}. Rows affected: {rows_affected}")
                     
-                    return redirect(url_for('restaurant_reservations', date=date))
+                    # Si se recibe la fecha (vista de calendario) se redirige a la misma, 
+                    # de lo contrario se redirige a la vista de lista de reservas
+                    if date:
+                        return redirect(url_for('restaurant_reservations', date=date))
+                    else:
+                        return redirect(url_for('restaurant'))
                 else:
                     return render_template("home.html", message="No tienes permiso para modificar esta reserva")
         except Exception as e:

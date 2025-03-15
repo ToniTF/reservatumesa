@@ -82,6 +82,7 @@
                         <table class="table reservation-table">
                             <thead>
                                 <tr>
+                                    <th>Fecha</th>
                                     <th>Hora</th>
                                     <th>Cliente</th>
                                     <th>Comensales</th>
@@ -92,6 +93,7 @@
                             <tbody>
                                 {% for reservation in reservations %}
                                 <tr>
+                                    <td>{{ reservation.date }}</td>
                                     <td>{{ reservation.time }}</td>
                                     <td>{{ reservation.client_name }}</td>
                                     <td>{{ reservation.diners }} personas</td>

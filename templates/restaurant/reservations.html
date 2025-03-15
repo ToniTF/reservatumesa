@@ -59,9 +59,9 @@
                                 <button type="button" class="btn button-pulse" onclick="navigateToDate()">
                                     <i class="bi bi-calendar-check"></i> Ver reservas
                                 </button>
-                                <a href="/restaurant?date={{ selected_date }}" class="btn button-pulse">
+                                <button type="button" class="btn button-pulse" onclick="navigateToCalendar()">
                                     <i class="bi bi-calendar3"></i> Ver Calendario
-                                </a>
+                                </button>
                             </div>
                         </form>
                         <script>
@@ -70,6 +70,14 @@
                                 const selectedDate = dateInput.value;
                                 if (selectedDate) {
                                     window.location.href = `/restaurant/reservations/${selectedDate}`;
+                                }
+                            }
+                            
+                            function navigateToCalendar() {
+                                const dateInput = document.querySelector('input[name="date"]');
+                                const selectedDate = dateInput.value;
+                                if (selectedDate) {
+                                    window.location.href = `/restaurant?date=${selectedDate}`;
                                 }
                             }
                         </script>

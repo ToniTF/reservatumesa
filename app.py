@@ -553,7 +553,10 @@ def update_reservation_status():
                     # Si se recibe la fecha (vista de calendario) se redirige a la misma, 
                     # de lo contrario se redirige a la vista de lista de reservas
                     if date:
-                        return redirect(url_for('restaurant_reservations', date=date))
+                        if date == "Todas":
+                            return redirect(url_for('restaurant'))
+                        else:
+                            return redirect(url_for('restaurant_reservations', date=date))
                     else:
                         return redirect(url_for('restaurant'))
                 else:

@@ -54,16 +54,16 @@
                                 </div>
                             </div>
                             
-                            <!-- Botones dentro del formulario -->
+                            <!-- Botones dentro del formulario con mejor estructura -->
                             <div class="d-flex justify-content-center gap-3">
-                                <button type="button" id="viewReservationsBtn" class="btn button-pulse" onclick="navigateToDate()">
-                                    <i class="bi bi-calendar-check"></i> Ver reservas
+                                <button type="button" id="viewReservationsBtn" class="btn button-pulse">
+                                    <i class="bi bi-calendar-check"></i><span>Reservas</span>
                                 </button>
-                                <button type="button" id="viewCalendarBtn" class="btn button-pulse" onclick="navigateToCalendar()">
-                                    <i class="bi bi-calendar3"></i> Ver calendario
+                                <button type="button" id="viewCalendarBtn" class="btn button-pulse">
+                                    <i class="bi bi-calendar3"></i><span>Calendario</span>
                                 </button>
                                 <a href="/restaurant" class="btn button-pulse">
-                                    <i class="bi bi-list-check"></i> Ver todas
+                                    <i class="bi bi-list-check"></i><span>Todas</span>
                                 </a>
                             </div>
                         </form>
@@ -272,6 +272,45 @@
             opacity: 0.65;
             cursor: not-allowed;
             pointer-events: none;
+        }
+        
+        /* Ajuste responsive para botones */
+        .btn.button-pulse {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 110px;
+        }
+        
+        /* Ajuste para iconos en botones */
+        .btn.button-pulse i {
+            margin-right: 0.4rem;
+            font-size: 0.9rem;
+        }
+        
+        /* Estilos para dispositivos móviles */
+        @media (max-width: 768px) {
+            .d-flex.justify-content-center.gap-3 {
+                flex-direction: column;
+                gap: 0.5rem !important;
+            }
+            
+            .btn.button-pulse {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+        
+        /* Estilos para tablets y pantallas más pequeñas */
+        @media (min-width: 769px) and (max-width: 992px) {
+            .btn.button-pulse {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.85rem;
+                min-width: 100px;
+            }
         }
         
         .reservation-table tbody tr {

@@ -78,11 +78,26 @@
                                     <button type="submit" class="btn button-pulse">
                                         <i class="bi bi-calendar-check"></i> Ver reservas
                                     </button>
-                                    <a href="/restaurant/reservations/{{ selected_date }}" class="btn button-pulse">
-                                        <i class="bi bi-list-ul"></i> Detalles de Reservas
+                                    <a href="#" onclick="viewCalendar()" class="btn button-pulse">
+                                        <i class="bi bi-list-ul"></i> Ver calendario
+                                    </a>
+                                    <a href="/restaurant" class="btn button-pulse">
+                                        <i class="bi bi-list-check"></i> Ver todas
                                     </a>
                                 </div>
                             </form>
+                            
+                            <script>
+                                function viewCalendar() {
+                                    const dateInput = document.querySelector('input[name="date"]');
+                                    const selectedDate = dateInput.value;
+                                    if (selectedDate) {
+                                        window.location.href = `/restaurant?date=${selectedDate}`;
+                                    } else {
+                                        alert("Por favor, selecciona una fecha.");
+                                    }
+                                }
+                            </script>
                         </div>
                     </div>
                 </div>

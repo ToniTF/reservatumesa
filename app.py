@@ -735,7 +735,7 @@ def update_reservation(reservation_id):
 
 @app.route('/cancel_reservation/<int:reservation_id>', methods=['POST'])
 def cancel_reservation(reservation_id):
-    # Verificar si el usuario está logueado
+    # Verificar si el usuario (cliente) está logueado
     if 'username' not in session or 'client_id' not in session:
         return redirect(url_for('login_page'))
     
@@ -750,11 +750,12 @@ def cancel_reservation(reservation_id):
             reservation = cursor.fetchone()
             
             if not reservation:
+                # Si no existe, redirigir o mostrar error
                 return redirect(url_for('my_reservations'))
             
-            # Eliminar la reserva
-            delete_query = "DELETE FROM reservation WHERE reservation_id = %s AND client_id = %s"
-            cursor.execute(delete_query, (reservation_id, client_id))
+            # En lugar de borrar la reserva, actualizar el estado a "cancelada"
+            update_query = "UPDATE reservation SET status = %s WHERE reservation_id = %s AND client_id = %s"
+            cursor.execute(update_query, ('cancelada', reservation_id, client_id))
             connection.commit()
             
             return redirect(url_for('my_reservations'))

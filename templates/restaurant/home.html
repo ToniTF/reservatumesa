@@ -219,6 +219,41 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+    <script>
+        // Auto-refresco de la página cada 30 segundos (30000 ms)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Comprobamos si ya hay una cuenta regresiva activa
+            if (!window.autoRefreshTimer) {
+                // Crear un temporizador que refresque la página
+                window.autoRefreshTimer = setInterval(function() {
+                    // Guardar el estado actual
+                    const scrollPosition = window.scrollY;
+                    
+                    // Refrescar la página manteniendo los parámetros actuales
+                    const currentUrl = window.location.href;
+                    
+                    // Solo refrescar si no hay un modal abierto
+                    const modalOpen = document.querySelector('.modal.show');
+                    if (!modalOpen) {
+                        // Guardar la posición de desplazamiento en sessionStorage
+                        sessionStorage.setItem('scrollPosition', scrollPosition);
+                        
+                        // Recargar la página
+                        window.location.href = currentUrl;
+                    }
+                }, 30000); // Refrescar cada 30 segundos
+            }
+        });
+        
+        // Restaurar la posición de desplazamiento después de recargar
+        window.onload = function() {
+            const savedScrollPosition = sessionStorage.getItem('scrollPosition');
+            if (savedScrollPosition) {
+                window.scrollTo(0, parseInt(savedScrollPosition));
+                sessionStorage.removeItem('scrollPosition');
+            }
+        };
+    </script>
 </body>
 
 </html>

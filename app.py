@@ -401,9 +401,9 @@ def restaurant_reservations(date):
         connection = db.get_connection()
         try:
             with connection.cursor() as cursor:
-                # Get restaurant data
+                # Get restaurant data - CORREGIR AQUÍ: usar restaurant_id en lugar de email
                 query = "SELECT * FROM restaurant WHERE restaurant_id = %s"
-                data = (session['email'],)
+                data = (session['restaurant_id'],)  # Cambiado de session['email'] a session['restaurant_id']
                 cursor.execute(query, data)
                 restaurant = cursor.fetchone()
                 

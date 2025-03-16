@@ -97,7 +97,7 @@
                         
                         <!-- Contenido de las pestañas -->
                         <div class="tab-content" id="profileTabContent">
-                            <!-- Información Básica -->
+                            <!-- Información Básica (sin campo de email) -->
                             <div class="tab-pane fade show active" id="basic-info" role="tabpanel" aria-labelledby="basic-tab">
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
@@ -123,16 +123,10 @@
                                         <small class="form-text text-muted">Con o sin prefijos 'www.' o 'https://'</small>
                                     </div>
                                 </div>
-                                <!-- Nuevo campo para modificar email -->
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="email" class="form-label">Correo Electrónico</label>
-                                        <input type="email" class="form-control" id="email" name="email" value="{{ restaurant.email }}" required>
-                                    </div>
-                                </div>
+                                <!-- Fin de Información Básica sin el campo de email -->
                             </div>
                             
-                            <!-- Descripción e Imagen -->
+                            <!-- Descripción e Imagen (sin cambios) -->
                             <div class="tab-pane fade" id="detail-info" role="tabpanel" aria-labelledby="detail-tab">
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
@@ -156,7 +150,7 @@
                                 </div>
                             </div>
                             
-                            <!-- Seguridad -->
+                            <!-- Seguridad: se agrega el nuevo campo de email -->
                             <div class="tab-pane fade" id="security-info" role="tabpanel" aria-labelledby="security-tab">
                                 <div class="row">
                                     <div class="col-md-12 mb-4">
@@ -164,6 +158,14 @@
                                             <i class="bi bi-exclamation-circle-fill me-2"></i>
                                             <span>¡Importante!</span> Completa los campos para cambiar tu contraseña o ingresa solo tu contraseña actual para confirmar otros cambios. El email actualizado se usará para tu inicio de sesión.
                                         </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="email" class="form-label">Nuevo Correo Electrónico</label>
+                                        <input type="email" class="form-control" id="email" name="email" value="{{ restaurant.email }}" required>
+                                        <small class="form-text text-muted">Este correo se usará para iniciar sesión</small>
                                     </div>
                                 </div>
                                 
@@ -181,21 +183,20 @@
                                         <input type="password" class="form-control" id="new_password" name="new_password">
                                         <small class="form-text text-muted">Deja vacío si no quieres cambiarla</small>
                                     </div>
-                                    
                                     <div class="col-md-6 mb-3">
                                         <label for="confirm_password" class="form-label">Confirmar Nueva Contraseña</label>
                                         <input type="password" class="form-control" id="confirm_password" name="confirm_password">
                                     </div>
                                 </div>
                                 
-                                <!-- Botón de guardar cambios (dentro de la pestaña de seguridad) -->
+                                <!-- Botón de guardar cambios en seguridad -->
                                 <div class="text-center mt-4">
                                     <button type="submit" class="btn button-pulse btn-lg">
                                         <i class="bi bi-save"></i> Guardar Cambios
                                     </button>
                                 </div>
                                 
-                                <!-- Sección de eliminar cuenta -->
+                                <!-- Zona de Peligro para eliminar cuenta -->
                                 <hr class="mt-4 mb-4">
                                 <div class="row">
                                     <div class="col-md-12">

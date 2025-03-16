@@ -948,47 +948,64 @@ def update_restaurant_profile():
     phone = request.form.get('phone')
     website = request.form.get('website')
     description = request.form.get('description')
-    email = request.form.get('email').strip()          # nuevo email
-    repeat_email = request.form.get('repeat_email').strip()  # repetir email
+    email = request.form.get('email').strip()
+    repeat_email = request.form.get('repeat_email').strip()
     current_password = request.form.get('current_password')
     new_password = request.form.get('new_password')
     confirm_password = request.form.get('confirm_password')
     
+    # Obtener los tipos de cocina seleccionados (pueden ser múltiples)
+    cuisine_ids = request.form.getlist('cuisine_ids')
+    
     try:
         with connection.cursor() as cursor:
+            # Obtener datos actuales del restaurante
             query = "SELECT * FROM restaurant WHERE restaurant_id = %s"
             cursor.execute(query, (restaurant_id,))
             restaurant = cursor.fetchone()
             
-            # Si el usuario dejó vacíos los campos de email, se conserva el email actual.
+            # Si el usuario dejó vacíos los campos de email, se conserva el email actual
             if not email and not repeat_email:
                 email = restaurant['email']
                 repeat_email = restaurant['email']
             
             # Validar que los correos electrónicos sean iguales si se ingresó algo
             if email != repeat_email:
-                connection.close()
+                # Obtener todos los tipos de cocina para el selector
+                cursor.execute("SELECT * FROM cuisine_type ORDER BY cuisine_name")
+                cuisine_types = cursor.fetchall()
+                
+                # Obtener los tipos de cocina actuales del restaurante
+                cursor.execute(
+                    "SELECT cuisine_id FROM restaurant_cuisine WHERE restaurant_id = %s",
+                    (restaurant_id,)
+                )
+                restaurant_cuisines = [item['cuisine_id'] for item in cursor.fetchall()]
+                
                 return render_template('restaurant/edit_profile.html',
                                        restaurant=restaurant,
+                                       cuisine_types=cuisine_types,
+                                       restaurant_cuisines=restaurant_cuisines,
                                        message="Los correos electrónicos no coinciden",
                                        message_type="danger")
-            
-            # Procesar la URL del sitio web si es necesario
-            if website:
-                if website.startswith('www.') and not website.startswith(('http://', 'https://')):
-                    website = 'https://' + website
-                elif not website.startswith(('http://', 'https://', 'www.')):
-                    website = 'https://www.' + website
-                elif website.startswith('www.'):
-                    website = 'https://' + website
             
             # Verificar la contraseña actual
             stored_password = restaurant['password']
             if not bcrypt.checkpw(current_password.encode('utf-8'), stored_password.encode('utf-8')):
-                connection.close()
+                cursor.execute("SELECT * FROM cuisine_type ORDER BY cuisine_name")
+                cuisine_types = cursor.fetchall()
+                
+                cursor.execute(
+                    "SELECT cuisine_id FROM restaurant_cuisine WHERE restaurant_id = %s",
+                    (restaurant_id,)
+                )
+                restaurant_cuisines = [item['cuisine_id'] for item in cursor.fetchall()]
+                
                 return render_template(
                     'restaurant/edit_profile.html',
                     restaurant=restaurant,
+                    cuisine_types=cuisine_types,
+                    restaurant_cuisines=restaurant_cuisines,
                     message="La contraseña actual no es correcta",
                     message_type="danger"
                 )
@@ -996,10 +1013,20 @@ def update_restaurant_profile():
             # Verificar si se quiere cambiar la contraseña
             if new_password:
                 if new_password != confirm_password:
-                    connection.close()
+                    cursor.execute("SELECT * FROM cuisine_type ORDER BY cuisine_name")
+                    cuisine_types = cursor.fetchall()
+                    
+                    cursor.execute(
+                        "SELECT cuisine_id FROM restaurant_cuisine WHERE restaurant_id = %s",
+                        (restaurant_id,)
+                    )
+                    restaurant_cuisines = [item['cuisine_id'] for item in cursor.fetchall()]
+                    
                     return render_template(
                         'restaurant/edit_profile.html',
                         restaurant=restaurant,
+                        cuisine_types=cuisine_types,
+                        restaurant_cuisines=restaurant_cuisines,
                         message="Las nuevas contraseñas no coinciden",
                         message_type="danger"
                     )
@@ -1007,23 +1034,25 @@ def update_restaurant_profile():
             else:
                 hashed_password = stored_password
             
-            # Manejar la imagen si se proporciona (opcional)
+            # Manejar la imagen si se proporciona
             image = request.files.get('image')
             if image and image.filename:
+                # Si se ha subido una imagen válida
                 from werkzeug.utils import secure_filename
                 import os, time
-                app.config['UPLOAD_FOLDER'] = 'static/img'
                 secure_filename_value = secure_filename(image.filename)
                 timestamp = int(time.time())
                 filename = f"{timestamp}_{secure_filename_value}"
-                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-                image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                # Crear directorio si no existe
+                os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+                image_path = os.path.join(UPLOAD_FOLDER, filename)
                 image.save(image_path)
                 image_name = filename
             else:
-                image_name = restaurant['image']
+                # Si no se sube una imagen, mantener la actual o usar default
+                image_name = restaurant.get('image') or "aquitulogo-27.webp"
             
-            # Actualizar datos del restaurante, incluyendo el email
+            # Actualizar datos del restaurante en la tabla restaurant
             update_query = """
             UPDATE restaurant 
             SET restaurant_name = %s, address = %s, phone = %s, website = %s, 
@@ -1033,10 +1062,24 @@ def update_restaurant_profile():
             cursor.execute(update_query, (
                 restaurant_name, address, phone, website, description,
                 hashed_password, image_name, email, restaurant_id
-            ))
+             ))
+            
+            # Actualizar los tipos de cocina:
+            # 1. Primero eliminar todos los tipos de cocina actuales del restaurante
+            cursor.execute("DELETE FROM restaurant_cuisine WHERE restaurant_id = %s", (restaurant_id,))
+            
+            # 2. Luego insertar los nuevos tipos seleccionados
+            if cuisine_ids:
+                for cuisine_id in cuisine_ids:
+                    cursor.execute(
+                        "INSERT INTO restaurant_cuisine (restaurant_id, cuisine_id) VALUES (%s, %s)",
+                        (restaurant_id, cuisine_id)
+                    )
+            
+            # Confirmar los cambios en la base de datos
             connection.commit()
             
-            # Actualizar la sesión con el nuevo email
+            # Actualizar la sesión con el nombre del restaurante y email
             session['restaurant_name'] = restaurant_name
             session['email'] = email
             
@@ -1044,18 +1087,50 @@ def update_restaurant_profile():
             cursor.execute("SELECT * FROM restaurant WHERE restaurant_id = %s", (restaurant_id,))
             updated_restaurant = cursor.fetchone()
             
+            # Obtener los tipos de cocina para el selector
+            cursor.execute("SELECT * FROM cuisine_type ORDER BY cuisine_name")
+            cuisine_types = cursor.fetchall()
+            
+            # Obtener los tipos de cocina actuales del restaurante (después de la actualización)
+            cursor.execute(
+                "SELECT cuisine_id FROM restaurant_cuisine WHERE restaurant_id = %s",
+                (restaurant_id,)
+            )
+            restaurant_cuisines = [item['cuisine_id'] for item in cursor.fetchall()]
+            
             return render_template(
                 'restaurant/edit_profile.html',
                 restaurant=updated_restaurant,
+                cuisine_types=cuisine_types,
+                restaurant_cuisines=restaurant_cuisines,
                 message="Perfil actualizado correctamente",
                 message_type="success"
             )
     except Exception as e:
         print("Error al actualizar perfil del restaurante:", e)
         connection.rollback()
+        
+        # Si ocurre un error, volver a obtener los datos para mostrar el formulario
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM restaurant WHERE restaurant_id = %s", (restaurant_id,))
+        restaurant = cursor.fetchone()
+        
+        # Obtener los tipos de cocina para el selector
+        cursor.execute("SELECT * FROM cuisine_type ORDER BY cuisine_name")
+        cuisine_types = cursor.fetchall()
+        
+        # Obtener los tipos de cocina actuales del restaurante
+        cursor.execute(
+            "SELECT cuisine_id FROM restaurant_cuisine WHERE restaurant_id = %s", 
+            (restaurant_id,)
+        )
+        restaurant_cuisines = [item['cuisine_id'] for item in cursor.fetchall()]
+        
         return render_template(
             'restaurant/edit_profile.html',
             restaurant=restaurant,
+            cuisine_types=cuisine_types,
+            restaurant_cuisines=restaurant_cuisines,
             message=f"Error al actualizar el perfil: {str(e)}",
             message_type="danger"
         )

@@ -37,6 +37,52 @@
             background-color: #0d6efd;
             border-color: #0d6efd;
         }
+        .cuisine-selector {
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+        
+        .cuisine-selector::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .cuisine-selector::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        .cuisine-selector::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        
+        .cuisine-selector::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        .form-check-input:checked + .form-check-label {
+            font-weight: 600;
+            color: #005fb8;
+        }
+        
+        /* Nuevos estilos para mejorar espaciado y tamaño */
+        .cuisine-selector .form-check {
+            display: flex;
+            align-items: center;
+        }
+        
+        .cuisine-selector .form-check-input {
+            margin-right: 8px; /* Aumentar espacio entre checkbox y texto */
+        }
+        
+        .cuisine-selector .form-check-label {
+            font-size: 0.9rem; /* Texto más pequeño */
+            margin-top: 1px; /* Ajuste fino para centrar verticalmente */
+        }
+        
+        .cuisine-selector .col-md-3 {
+            padding-right: 10px; /* Mejor espaciado entre columnas */
+        }
     </style>
 </head>
 <body>
@@ -121,6 +167,30 @@
                                         <label for="website" class="form-label">Sitio Web</label>
                                         <input type="text" class="form-control" id="website" name="website" value="{{ restaurant.website }}" placeholder="www.turestaurante.com">
                                         <small class="form-text text-muted">Con o sin prefijos 'www.' o 'https://'</small>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label class="form-label">Tipos de Cocina</label>
+                                        <div class="cuisine-selector border rounded p-3">
+                                            <div class="row">
+                                                {% for cuisine in cuisine_types %}
+                                                    <div class="col-md-3 col-sm-6 mb-2">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" name="cuisine_ids" 
+                                                                id="cuisine{{ cuisine.cuisine_id }}" value="{{ cuisine.cuisine_id }}"
+                                                                {% if cuisine.cuisine_id in restaurant_cuisines %} checked {% endif %}>
+                                                            <label class="form-check-label" for="cuisine{{ cuisine.cuisine_id }}">
+                                                                {{ cuisine.cuisine_name }}
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <small class="form-text text-muted mt-2">
+                                            <i class="bi bi-info-circle"></i> Selecciona todos los tipos de cocina que ofrece tu restaurante
+                                        </small>
                                     </div>
                                 </div>
                                 <!-- Fin de Información Básica sin el campo de email -->

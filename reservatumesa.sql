@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 16-03-2025 a las 16:30:38
+-- Tiempo de generación: 16-03-2025 a las 23:16:21
 -- Versión del servidor: 9.1.0
 -- Versión de PHP: 8.3.14
 
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `client` (
   `email` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
   `phone` varchar(15) COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`client_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `client`
@@ -57,6 +57,53 @@ INSERT INTO `client` (`client_id`, `username`, `password`, `email`, `phone`) VAL
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `cuisine_type`
+--
+
+DROP TABLE IF EXISTS `cuisine_type`;
+CREATE TABLE IF NOT EXISTS `cuisine_type` (
+  `cuisine_id` int NOT NULL AUTO_INCREMENT,
+  `cuisine_name` varchar(50) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`cuisine_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `cuisine_type`
+--
+
+INSERT INTO `cuisine_type` (`cuisine_id`, `cuisine_name`, `description`) VALUES
+(1, 'Mediterránea', NULL),
+(2, 'Italiana', NULL),
+(3, 'Japonesa', NULL),
+(4, 'Mexicana', NULL),
+(5, 'China', NULL),
+(6, 'India', NULL),
+(7, 'Vegana', NULL),
+(8, 'Americana', NULL),
+(9, 'Española', NULL),
+(10, 'Fusión', NULL),
+(11, 'Cocina Internacional', NULL),
+(12, 'Tailandesa', NULL),
+(13, 'Árabe', NULL),
+(14, 'Peruana', NULL),
+(15, 'Cocina Local/Regional', NULL),
+(16, 'Comida rápida', NULL),
+(17, 'Comida saludable', NULL),
+(18, 'Vegetariana', NULL),
+(19, 'Orgánica', NULL),
+(20, 'Comida casera', NULL),
+(21, 'Comida gourmet', NULL),
+(22, 'Parrilla', NULL),
+(23, 'Mariscos', NULL),
+(24, 'Postres', NULL),
+(25, 'Vegetariano', NULL),
+(26, 'Sin gluten', NULL),
+(27, 'Sin lactosa', NULL);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `reservation`
 --
 
@@ -72,7 +119,16 @@ CREATE TABLE IF NOT EXISTS `reservation` (
   PRIMARY KEY (`reservation_id`),
   KEY `client_id` (`client_id`),
   KEY `restaurant_id` (`restaurant_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `reservation`
+--
+
+INSERT INTO `reservation` (`reservation_id`, `client_id`, `restaurant_id`, `diners`, `date`, `time`, `status`) VALUES
+(22, 18, 31, 2, '2025-03-17', '20:30:00', ''),
+(23, 18, 31, 4, '2025-03-18', '13:00:00', ''),
+(24, 18, 31, 6, '2025-03-26', '13:30:00', '');
 
 -- --------------------------------------------------------
 
@@ -122,6 +178,20 @@ INSERT INTO `restaurant` (`restaurant_id`, `username`, `email`, `password`, `pho
 (19, 'TodoAlHorno', 'todoalhorno@gmail.com', '$2b$12$hsiO8pmRbzd/G7e6NR0PYOzk7HK7lkwc5eIsiaMylBVfPdLdN215S', '630 876 210', 'Todo al Horno', 40, ' www.todoalhorno.com', 'Calle del Fuego, 77', 'Platos cocinados al horno para una experiencia sin frituras.', 'todoalhorno.jpg'),
 (20, 'CucharaDeOro', 'cucharadeoro@gmail.com', '$2b$12$OjezuacEZf0Vk0xrV/V9DeDryFZogkHfmtq17QjqJPUkYkRJzkqKC', '679 543 876', 'Cuchara de Oro', 25, 'www.cucharadeoro.com', 'Calle de la Abuela, 6', 'Comida casera con recetas tradicionales y sopas abundantes.', 'cucharadeoro.jpg'),
 (31, 'Admin', 'adminrest@adminrest.com', '$2b$12$spFmCUXai29gSUGtJ917TObSqXtamTtiznSANxIOLmsvzsDNYAOHC', '986256987', 'ABC', 45, 'www.abc.com', 'Abecedario, 36', 'Comida con todas las letras.', 'aquitulogo-27.webp');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `restaurant_cuisine`
+--
+
+DROP TABLE IF EXISTS `restaurant_cuisine`;
+CREATE TABLE IF NOT EXISTS `restaurant_cuisine` (
+  `restaurant_id` int NOT NULL,
+  `cuisine_id` int NOT NULL,
+  PRIMARY KEY (`restaurant_id`,`cuisine_id`),
+  KEY `cuisine_id` (`cuisine_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Restricciones para tablas volcadas

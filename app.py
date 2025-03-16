@@ -111,7 +111,58 @@ def restaurant_details(restaurant_id):
         return redirect(url_for('home'))
     
 
-
+@app.route('/user/home')
+def user_home():
+    if 'username' not in session or session.get('user_type') != 'client':
+        return redirect(url_for('login_page'))
+    
+    # Obtener los IDs de cocina seleccionados
+    selected_cuisines = request.args.getlist('cuisine_ids')
+    
+    connection = db.get_connection()
+    try:
+        with connection.cursor() as cursor:
+            # 1. Obtener todos los tipos de cocina para mostrar en el filtro
+            cursor.execute("SELECT * FROM cuisine_type ORDER BY cuisine_name")
+            cuisine_types = cursor.fetchall()
+            
+            # 2. Construir la consulta según los filtros
+            if selected_cuisines:
+                # Si hay filtros seleccionados, buscar restaurantes que tengan alguno de esos tipos
+                placeholders = ", ".join(["%s"] * len(selected_cuisines))
+                query = f"""
+                SELECT DISTINCT r.* FROM restaurant r
+                JOIN restaurant_cuisine rc ON r.restaurant_id = rc.restaurant_id
+                WHERE rc.cuisine_id IN ({placeholders})
+                ORDER BY r.restaurant_name
+                """
+                cursor.execute(query, selected_cuisines)
+            else:
+                # Si no hay filtros, mostrar todos
+                cursor.execute("SELECT * FROM restaurant ORDER BY restaurant_name")
+            
+            restaurants = cursor.fetchall()
+            
+            # 3. Para cada restaurante, obtener sus tipos de cocina
+            for restaurant in restaurants:
+                cuisine_query = """
+                SELECT ct.cuisine_name FROM cuisine_type ct
+                JOIN restaurant_cuisine rc ON ct.cuisine_id = rc.cuisine_id
+                WHERE rc.restaurant_id = %s
+                """
+                cursor.execute(cuisine_query, (restaurant['restaurant_id'],))
+                cuisine_results = cursor.fetchall()
+                restaurant['cuisine_types'] = [cuisine['cuisine_name'] for cuisine in cuisine_results]
+            
+            return render_template('user/home.html', 
+                                  restaurants=restaurants,
+                                  cuisine_types=cuisine_types,
+                                  selected_cuisines=selected_cuisines)
+    except Exception as e:
+        print("Error al cargar restaurantes:", e)
+        return render_template('user/home.html', message="Error al cargar restaurantes")
+    finally:
+        connection.close()
 
 # ------------- Parte de Restaurante -------------
 
@@ -860,10 +911,23 @@ def edit_restaurant_profile():
             cursor.execute(query, (restaurant_id,))
             restaurant = cursor.fetchone()
             
-            if not restaurant:
-                return redirect(url_for('login_pageRest'))
+            # Obtener todos los tipos de cocina
+            cursor.execute("SELECT * FROM cuisine_type ORDER BY cuisine_name")
+            cuisine_types = cursor.fetchall()
             
-            return render_template('restaurant/edit_profile.html', restaurant=restaurant)
+            # Obtener los tipos de cocina del restaurante
+            cursor.execute(
+                "SELECT cuisine_id FROM restaurant_cuisine WHERE restaurant_id = %s", 
+                (restaurant_id,)
+            )
+            restaurant_cuisines = [item['cuisine_id'] for item in cursor.fetchall()]
+            
+            return render_template(
+                'restaurant/edit_profile.html',
+                restaurant=restaurant,
+                cuisine_types=cuisine_types,
+                restaurant_cuisines=restaurant_cuisines
+            )
     except Exception as e:
         print("Error al obtener datos del restaurante:", e)
         return redirect(url_for('restauranthome'))
@@ -1057,6 +1121,74 @@ def delete_restaurant_account():
             message=f"Error al eliminar la cuenta: {str(e)}",
             message_type="danger"
         )
+    finally:
+        connection.close()
+
+@app.route('/restaurant/update_cuisine', methods=['POST'])
+def update_restaurant_cuisine():
+    if 'restaurant_id' not in session:
+        return redirect(url_for('login_pageRest'))
+    
+    restaurant_id = session['restaurant_id']
+    # Obtener los tipos de cocina seleccionados
+    cuisine_ids = request.form.getlist('cuisine_ids')
+    
+    connection = db.get_connection()
+    try:
+        with connection.cursor() as cursor:
+            # Primero eliminar todas las relaciones actuales
+            cursor.execute("DELETE FROM restaurant_cuisine WHERE restaurant_id = %s", (restaurant_id,))
+            
+            # Luego insertar las nuevas selecciones
+            if cuisine_ids:
+                for cuisine_id in cuisine_ids:
+                    cursor.execute(
+                        "INSERT INTO restaurant_cuisine (restaurant_id, cuisine_id) VALUES (%s, %s)", 
+                        (restaurant_id, cuisine_id)
+                    )
+            
+            connection.commit()
+            return redirect(url_for('edit_restaurant_profile', message="Tipos de cocina actualizados correctamente"))
+    except Exception as e:
+        print("Error al actualizar tipos de cocina:", e)
+        connection.rollback()
+        return redirect(url_for('edit_restaurant_profile', message="Error al actualizar tipos de cocina"))
+    finally:
+        connection.close()
+
+@app.route('/search_restaurants')
+def search_restaurants():
+    cuisine_id = request.args.get('cuisine_id')
+    
+    connection = db.get_connection()
+    try:
+        with connection.cursor() as cursor:
+            # Obtener todos los tipos de cocina para el selector
+            cursor.execute("SELECT * FROM cuisine_type ORDER BY cuisine_name")
+            cuisine_types = cursor.fetchall()
+            
+            # Si se seleccionó un tipo de cocina, filtrar por ese tipo
+            if cuisine_id:
+                query = """
+                SELECT DISTINCT r.* FROM restaurant r
+                JOIN restaurant_cuisine rc ON r.restaurant_id = rc.restaurant_id
+                WHERE rc.cuisine_id = %s
+                ORDER BY r.restaurant_name
+                """
+                cursor.execute(query, (cuisine_id,))
+            else:
+                # Si no, mostrar todos los restaurantes
+                cursor.execute("SELECT * FROM restaurant ORDER BY restaurant_name")
+                
+            restaurants = cursor.fetchall()
+            
+            return render_template('user/home.html', 
+                                  restaurants=restaurants,
+                                  cuisine_types=cuisine_types,
+                                  selected_cuisine=cuisine_id)
+    except Exception as e:
+        print("Error al buscar restaurantes:", e)
+        return render_template('user/home.html', message="Error en la búsqueda")
     finally:
         connection.close()
 

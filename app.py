@@ -860,25 +860,37 @@ def update_restaurant_profile():
     restaurant_id = session['restaurant_id']
     connection = db.get_connection()
     
-    # Obtener datos del formulario (incluye nuevo campo email)
+    # Obtener datos del formulario
     restaurant_name = request.form.get('restaurant_name')
     address = request.form.get('address')
     phone = request.form.get('phone')
     website = request.form.get('website')
     description = request.form.get('description')
-    email = request.form.get('email')  # Nuevo campo para email
+    email = request.form.get('email')
+    repeat_email = request.form.get('repeat_email')
     current_password = request.form.get('current_password')
     new_password = request.form.get('new_password')
     confirm_password = request.form.get('confirm_password')
     
-    # Procesar la URL para asegurar formato correcto
+    # Validar que los correos electrónicos sean iguales
+    if email != repeat_email:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM restaurant WHERE restaurant_id = %s", (restaurant_id,))
+            restaurant = cursor.fetchone()
+        connection.close()
+        return render_template('restaurant/edit_profile.html',
+                               restaurant=restaurant,
+                               message="Los correos electrónicos no coinciden",
+                               message_type="danger")
+    
+    # Procesar la URL del sitio web si es necesario
     if website:
         if website.startswith('www.') and not website.startswith(('http://', 'https://')):
             website = 'https://' + website
         elif not website.startswith(('http://', 'https://', 'www.')):
             website = 'https://www.' + website
         elif website.startswith('www.'):
-            website = 'https://www.' + website
+            website = 'https://' + website
     
     try:
         with connection.cursor() as cursor:
@@ -887,7 +899,7 @@ def update_restaurant_profile():
             cursor.execute(query, (restaurant_id,))
             restaurant = cursor.fetchone()
             
-            # Verificar contraseña actual
+            # Verificar la contraseña actual
             stored_password = restaurant['password']
             if not bcrypt.checkpw(current_password.encode('utf-8'), stored_password.encode('utf-8')):
                 return render_template(
@@ -915,8 +927,7 @@ def update_restaurant_profile():
             if image and image.filename:
                 from werkzeug.utils import secure_filename
                 import os, time
-                if not hasattr(app, 'config') or 'UPLOAD_FOLDER' not in app.config:
-                    app.config['UPLOAD_FOLDER'] = 'static/img'
+                app.config['UPLOAD_FOLDER'] = 'static/img'
                 secure_filename_value = secure_filename(image.filename)
                 timestamp = int(time.time())
                 filename = f"{timestamp}_{secure_filename_value}"
@@ -927,28 +938,25 @@ def update_restaurant_profile():
             else:
                 image_name = restaurant['image']
             
-            # Actualizar datos del restaurante, incluyendo el email
+            # Actualizar datos del restaurante, incluyendo el nuevo email
             update_query = """
             UPDATE restaurant 
-            SET restaurant_name = %s, address = %s, phone = %s, 
-                website = %s, description = %s, password = %s, 
-                image = %s, email = %s
+            SET restaurant_name = %s, address = %s, phone = %s, website = %s, 
+                description = %s, password = %s, image = %s, email = %s
             WHERE restaurant_id = %s
             """
             cursor.execute(update_query, (
-                restaurant_name, address, phone, website, 
-                description, hashed_password, image_name, email, 
-                restaurant_id
+                restaurant_name, address, phone, website, description,
+                hashed_password, image_name, email, restaurant_id
             ))
             connection.commit()
             
-            # Actualizar datos en la sesión: email y restaurant_name (y username si lo requieres)
+            # Actualizar la sesión con el nuevo email
             session['restaurant_name'] = restaurant_name
             session['email'] = email
             
-            # Obtener datos actualizados para el formulario
-            query = "SELECT * FROM restaurant WHERE restaurant_id = %s"
-            cursor.execute(query, (restaurant_id,))
+            # Obtener los datos actualizados para mostrar en el formulario
+            cursor.execute("SELECT * FROM restaurant WHERE restaurant_id = %s", (restaurant_id,))
             updated_restaurant = cursor.fetchone()
             
             return render_template(

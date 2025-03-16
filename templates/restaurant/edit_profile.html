@@ -167,13 +167,10 @@
                                         <input type="email" class="form-control" id="email" name="email" value="{{ restaurant.email }}" required>
                                         <small class="form-text text-muted">Este correo se usará para iniciar sesión</small>
                                     </div>
-                                </div>
-                                
-                                <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="current_password" class="form-label">Contraseña Actual</label>
-                                        <input type="password" class="form-control" id="current_password" name="current_password" required>
-                                        <small class="form-text text-muted">Necesaria para confirmar cualquier cambio</small>
+                                        <label for="repeat_email" class="form-label">Repetir Correo Electrónico</label>
+                                        <input type="email" class="form-control" id="repeat_email" name="repeat_email" value="{{ restaurant.email }}" required>
+                                        <small class="form-text text-muted">Repite el correo electrónico</small>
                                     </div>
                                 </div>
                                 
@@ -186,6 +183,14 @@
                                     <div class="col-md-6 mb-3">
                                         <label for="confirm_password" class="form-label">Confirmar Nueva Contraseña</label>
                                         <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="current_password" class="form-label">Contraseña Actual</label>
+                                        <input type="password" class="form-control" id="current_password" name="current_password" required>
+                                        <small class="form-text text-muted">Necesaria para confirmar cualquier cambio</small>
                                     </div>
                                 </div>
                                 

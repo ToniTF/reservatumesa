@@ -176,21 +176,40 @@ def register_restaurant():
     connection = db.get_connection()
     try:
         with connection.cursor() as cursor:
-            # Verificar si el email ya está registrado (ya que éste debe ser único)
+            # Verificar si el email ya está registrado
             query = "SELECT * FROM restaurant WHERE email = %s"
             cursor.execute(query, (email,))
             user = cursor.fetchone()
             if user:
                 return render_template("restaurant/register_restaurant.html", mensaje="El email ya está registrado")
             else:
+                # Manejar la imagen si se proporciona
+                image = request.files.get('restaurant_image')
+                if image and image.filename and allowed_file(image.filename):
+                    # Si se ha subido una imagen válida
+                    from werkzeug.utils import secure_filename
+                    import os, time
+                    secure_filename_value = secure_filename(image.filename)
+                    timestamp = int(time.time())
+                    filename = f"{timestamp}_{secure_filename_value}"
+                    # Crear directorio si no existe
+                    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+                    image_path = os.path.join(UPLOAD_FOLDER, filename)
+                    image.save(image_path)
+                    image_name = filename
+                else:
+                    # Si no se sube una imagen, asignar la imagen por defecto
+                    image_name = "aquitulogo-27.webp"
+                
                 # Encriptar la contraseña
                 hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-                # Insertar el nuevo restaurante
+                
+                # Modificar la consulta para incluir el campo image
                 query = """
-                    INSERT INTO restaurant (username, password, restaurant_name, phone, address, website, capacity, description, email)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    INSERT INTO restaurant (username, password, restaurant_name, phone, address, website, capacity, description, email, image)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """
-                data = (username, hashed, restaurant_name, phone, address, website, capacity, description, email)
+                data = (username, hashed, restaurant_name, phone, address, website, capacity, description, email, image_name)
                 cursor.execute(query, data)
                 connection.commit()
                 return render_template("home.html", mensaje="Restaurante registrado correctamente")

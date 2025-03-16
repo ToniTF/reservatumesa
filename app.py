@@ -853,7 +853,6 @@ def edit_restaurant_profile():
 
 @app.route('/restaurant/update_profile', methods=['POST'])
 def update_restaurant_profile():
-    # Verificar que el restaurante está logueado
     if 'restaurant_id' not in session:
         return redirect(url_for('login_pageRest'))
     
@@ -866,42 +865,44 @@ def update_restaurant_profile():
     phone = request.form.get('phone')
     website = request.form.get('website')
     description = request.form.get('description')
-    email = request.form.get('email')
-    repeat_email = request.form.get('repeat_email')
+    email = request.form.get('email').strip()          # nuevo email
+    repeat_email = request.form.get('repeat_email').strip()  # repetir email
     current_password = request.form.get('current_password')
     new_password = request.form.get('new_password')
     confirm_password = request.form.get('confirm_password')
     
-    # Validar que los correos electrónicos sean iguales
-    if email != repeat_email:
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM restaurant WHERE restaurant_id = %s", (restaurant_id,))
-            restaurant = cursor.fetchone()
-        connection.close()
-        return render_template('restaurant/edit_profile.html',
-                               restaurant=restaurant,
-                               message="Los correos electrónicos no coinciden",
-                               message_type="danger")
-    
-    # Procesar la URL del sitio web si es necesario
-    if website:
-        if website.startswith('www.') and not website.startswith(('http://', 'https://')):
-            website = 'https://' + website
-        elif not website.startswith(('http://', 'https://', 'www.')):
-            website = 'https://www.' + website
-        elif website.startswith('www.'):
-            website = 'https://' + website
-    
     try:
         with connection.cursor() as cursor:
-            # Obtener datos actuales del restaurante
             query = "SELECT * FROM restaurant WHERE restaurant_id = %s"
             cursor.execute(query, (restaurant_id,))
             restaurant = cursor.fetchone()
             
+            # Si el usuario dejó vacíos los campos de email, se conserva el email actual.
+            if not email and not repeat_email:
+                email = restaurant['email']
+                repeat_email = restaurant['email']
+            
+            # Validar que los correos electrónicos sean iguales si se ingresó algo
+            if email != repeat_email:
+                connection.close()
+                return render_template('restaurant/edit_profile.html',
+                                       restaurant=restaurant,
+                                       message="Los correos electrónicos no coinciden",
+                                       message_type="danger")
+            
+            # Procesar la URL del sitio web si es necesario
+            if website:
+                if website.startswith('www.') and not website.startswith(('http://', 'https://')):
+                    website = 'https://' + website
+                elif not website.startswith(('http://', 'https://', 'www.')):
+                    website = 'https://www.' + website
+                elif website.startswith('www.'):
+                    website = 'https://' + website
+            
             # Verificar la contraseña actual
             stored_password = restaurant['password']
             if not bcrypt.checkpw(current_password.encode('utf-8'), stored_password.encode('utf-8')):
+                connection.close()
                 return render_template(
                     'restaurant/edit_profile.html',
                     restaurant=restaurant,
@@ -912,6 +913,7 @@ def update_restaurant_profile():
             # Verificar si se quiere cambiar la contraseña
             if new_password:
                 if new_password != confirm_password:
+                    connection.close()
                     return render_template(
                         'restaurant/edit_profile.html',
                         restaurant=restaurant,
@@ -922,7 +924,7 @@ def update_restaurant_profile():
             else:
                 hashed_password = stored_password
             
-            # Manejar la imagen si se proporciona
+            # Manejar la imagen si se proporciona (opcional)
             image = request.files.get('image')
             if image and image.filename:
                 from werkzeug.utils import secure_filename
@@ -938,7 +940,7 @@ def update_restaurant_profile():
             else:
                 image_name = restaurant['image']
             
-            # Actualizar datos del restaurante, incluyendo el nuevo email
+            # Actualizar datos del restaurante, incluyendo el email
             update_query = """
             UPDATE restaurant 
             SET restaurant_name = %s, address = %s, phone = %s, website = %s, 

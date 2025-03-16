@@ -156,7 +156,7 @@
                                     <div class="col-md-12 mb-4">
                                         <div class="message text-center mb-3">
                                             <i class="bi bi-exclamation-circle-fill me-2"></i>
-                                            <span>¡Importante!</span> Completa los campos para cambiar tu contraseña o ingresa solo tu contraseña actual para confirmar otros cambios. El email actualizado se usará para tu inicio de sesión.
+                                            <span>¡Importante!</span> Completa los campos para cambiar tu contraseña o ingresa solo tu contraseña actual para confirmar otros cambios. Si actualizas el email, se usará para iniciar sesión.
                                         </div>
                                     </div>
                                 </div>
@@ -164,12 +164,12 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="email" class="form-label">Nuevo Correo Electrónico</label>
-                                        <input type="email" class="form-control" id="email" name="email" value="{{ restaurant.email }}" required>
+                                        <input type="email" class="form-control" id="email" name="email" value="" placeholder="Introduce nuevo email">
                                         <small class="form-text text-muted">Este correo se usará para iniciar sesión</small>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="repeat_email" class="form-label">Repetir Correo Electrónico</label>
-                                        <input type="email" class="form-control" id="repeat_email" name="repeat_email" value="{{ restaurant.email }}" required>
+                                        <input type="email" class="form-control" id="repeat_email" name="repeat_email" value="" placeholder="Repite el nuevo email">
                                         <small class="form-text text-muted">Repite el correo electrónico</small>
                                     </div>
                                 </div>

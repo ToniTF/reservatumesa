@@ -121,36 +121,34 @@ def login_pageRest():
         
 @app.route('/restaurant',methods=['POST'])
 def loginRest():
-    # obtener los datos del formulario
-    username = request.form['username'] 
+    # obtener los datos del formulario: usamos email en lugar de username
+    email = request.form['email']  
     password = request.form['password']
     connection = db.get_connection()
     try:
         with connection.cursor() as cursor:
-            query = "SELECT * FROM restaurant WHERE username = %s"
-            data = (username,)
-            cursor.execute(query, data)
+            query = "SELECT * FROM restaurant WHERE email = %s"
+            cursor.execute(query, (email,))
             user = cursor.fetchone()
             if user:
                 stored_password = user['password'].encode('utf-8')
                 if bcrypt.checkpw(password.encode('utf-8'), stored_password):
-                    session['username'] = username
+                    # Guardar datos en la sesión
+                    session['email'] = email
+                    session['username'] = user['username']
                     session['user_type'] = 'restaurant'
                     session['restaurant_id'] = user['restaurant_id']
                     session['restaurant_name'] = user['restaurant_name']
-                    # REDIRECCION sin parámetro de fecha para que se muestre la vista de lista
                     return redirect(url_for('restaurant'))
                 else:
-                    return render_template("restaurant/login_restaurant.html", message="Usuario o contraseña incorrecta")
+                    return render_template("restaurant/login_restaurant.html", message="Email o contraseña incorrecta")
             else:
-                return render_template("restaurant/login_restaurant.html", message="Usuario o contraseña incorrecta")
+                return render_template("restaurant/login_restaurant.html", message="Email o contraseña incorrecta")
     except Exception as e:
         print("Ocurrió un error al conectar a la bbdd: ", e)
         return render_template("home.html", message="Error de conexión a la base de datos")
     finally:    
         connection.close()
-        print("Conexión cerrada")
-
 
 @app.route('/register_restaurant')
 def register_pageRest():
@@ -158,10 +156,12 @@ def register_pageRest():
 
         
 @app.route('/registered_restaurant', methods=['POST'])
-def registered_restaurant():
-    # Obtener los datos del formulario
+def register_restaurant():
+    # Obtener datos del formulario
     username = request.form['username']
     password = request.form['password']
+    password2 = request.form['password2']  # Contraseña repetida
+    email = request.form['email']          # Nuevo campo
     restaurant_name = request.form['name']
     phone = request.form['phone']
     address = request.form['address']
@@ -169,89 +169,34 @@ def registered_restaurant():
     capacity = request.form['capacity']
     description = request.form['description']
     
-    print(f"Datos recibidos: username={username}, name={restaurant_name}")
+    # Verificar que ambas contraseñas sean idénticas
+    if password != password2:
+        return render_template("restaurant/register_restaurant.html", mensaje="Las contraseñas no coinciden")
     
-    # Crear la conexión a la base de datos
     connection = db.get_connection()
-    
     try:
         with connection.cursor() as cursor:
-            # Verificar si el usuario ya existe
-            query = "SELECT * FROM restaurant WHERE username = %s"
-            cursor.execute(query, (username,))
+            # Verificar si el email ya está registrado (ya que éste debe ser único)
+            query = "SELECT * FROM restaurant WHERE email = %s"
+            cursor.execute(query, (email,))
             user = cursor.fetchone()
-            
             if user:
-                return render_template("restaurant/register_restaurant.html", mensaje="El usuario ya existe")
-            
-            # Procesar la contraseña
-            hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-            
-            # Procesar la imagen si fue subida
-            image_path = None
-            if 'restaurant_image' in request.files:
-                file = request.files['restaurant_image']
-                if file and file.filename != '':
-                    if allowed_file(file.filename):
-                        # Generar nombre único para la imagen
-                        filename = secure_filename(file.filename)
-                        unique_filename = f"{int(time.time())}_{filename}"
-                        file_path = os.path.join(UPLOAD_FOLDER, unique_filename)
-                        
-                        # Asegurar que la carpeta existe
-                        os.makedirs(os.path.dirname(file_path), exist_ok=True)
-                        
-                        # Guardar la imagen
-                        file.save(file_path)
-                        
-                        # Guardar la ruta relativa para la base de datos
-                        image_path = f"restaurants/{unique_filename}"
-                        print(f"Imagen guardada en: {file_path}")
-                        print(f"Ruta guardada en BD: {image_path}")
-                    else:
-                        return render_template("restaurant/register_restaurant.html", 
-                                             mensaje="Formato de imagen no válido. Use JPG, PNG, GIF o WEBP")
-            
-            # Si no se subió imagen, usar una por defecto
-            if not image_path:
-                image_path = "restaurants/aquitulogo-27.webp"
-                print("Usando imagen por defecto")
-            
-            # Consultar la estructura de la tabla
-            try:
-                cursor.execute("DESCRIBE restaurant")
-                columns = cursor.fetchall()
-                column_names = [col['Field'] for col in columns]
-                print(f"Columnas en la tabla restaurant: {column_names}")
-            except Exception as e:
-                print(f"No se pudo obtener la estructura de la tabla: {e}")
-            
-            # Insertar el restaurante en la base de datos con los nombres de columna correctos
-            # Determinar si la columna del nombre del restaurante es 'name' o 'restaurant_name'
-            restaurant_name_column = 'restaurant_name'  # valor por defecto
-            if 'restaurant_name' not in column_names and 'name' in column_names:
-                restaurant_name_column = 'name'
-            
-            # Crear la consulta dinámica usando el nombre correcto de la columna
-            query = f"""
-            INSERT INTO restaurant (username, password, {restaurant_name_column}, phone, address, 
-                                  website, capacity, description, image) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """
-            
-            print(f"Ejecutando consulta: {query}")
-            cursor.execute(query, (username, hashed, restaurant_name, phone, address, 
-                                 website, capacity, description, image_path))
-            connection.commit()
-            
-            print("Restaurante registrado correctamente")
-            return render_template("home.html", mensaje="Restaurante registrado correctamente")
-            
+                return render_template("restaurant/register_restaurant.html", mensaje="El email ya está registrado")
+            else:
+                # Encriptar la contraseña
+                hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+                # Insertar el nuevo restaurante
+                query = """
+                    INSERT INTO restaurant (username, password, restaurant_name, phone, address, website, capacity, description, email)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """
+                data = (username, hashed, restaurant_name, phone, address, website, capacity, description, email)
+                cursor.execute(query, data)
+                connection.commit()
+                return render_template("home.html", mensaje="Restaurante registrado correctamente")
     except Exception as e:
-        print(f"Error al registrar restaurante: {e}")
-        connection.rollback()
-        return render_template("restaurant/register_restaurant.html", 
-                             mensaje=f"Error al registrar el restaurante: {str(e)}")
+        print("Ocurrió un error al registrar: ", e)
+        return render_template("restaurant/register_restaurant.html", mensaje="Error al registrar el restaurante")
     finally:
         connection.close()
 
@@ -262,8 +207,8 @@ def restaurant():
         try:
             with connection.cursor() as cursor:
                 # Obtener datos del restaurante
-                query = "SELECT * FROM restaurant WHERE username = %s"
-                cursor.execute(query, (session['username'],))
+                query = "SELECT * FROM restaurant WHERE restaurant_id = %s"
+                cursor.execute(query, (session['restaurant_id'],))
                 restaurant = cursor.fetchone()
                 
                 if restaurant:
@@ -424,45 +369,6 @@ def register():
         connection.close()
         print("Conexión cerrada")
 
-@app.route('/registered_restaurant',methods=['POST'])
-def registerRest():
-    #obtener los datos del formulario
-    username = request.form['username'] 
-    password = request.form['password']
-    restaurant_name = request.form['name']
-    phone = request.form['phone']   
-    address = request.form['address']
-    website = request.form['website']
-    capacity = request.form['capacity']
-    description = request.form['description']
-    #creamos la conexion
-    connection = db.get_connection()
-    try:
-        with connection.cursor() as cursor:
-            # Verificar si el usuario ya existe
-            query = "SELECT * FROM restaurant WHERE username = %s"
-            data = (username,)
-            cursor.execute(query, data)
-            user = cursor.fetchone()
-            if user:
-                return render_template("restaurant/register_restaurant.html", message="El usuario ya existe")
-            else:
-                # Hash the password
-                hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-                #crear la consulta
-                query = "INSERT INTO restaurant (username, password, restaurant_name, phone, address, website, capacity, description) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-                data = (username, hashed, restaurant_name, phone, address, website, capacity, description)
-                cursor.execute(query, data)
-                connection.commit()
-                return render_template("home.html", message="Restaurante registrado correctamente")
-    except Exception as e:
-        print("Ocurrió un error al conectar a la bbdd: ", e)
-        return render_template("home.html", message="Error al registrar el restaurante")
-    finally:
-        connection.close()
-        print("Conexión cerrada")
-                
-
 @app.route('/logout_restaurant')
 def logout_restaurant():
     session.pop('username', None)
@@ -477,8 +383,8 @@ def restaurant_reservations(date):
         try:
             with connection.cursor() as cursor:
                 # Get restaurant data
-                query = "SELECT * FROM restaurant WHERE username = %s"
-                data = (session['username'],)
+                query = "SELECT * FROM restaurant WHERE restaurant_id = %s"
+                data = (session['email'],)
                 cursor.execute(query, data)
                 restaurant = cursor.fetchone()
                 
@@ -846,24 +752,8 @@ def update_client_profile():
     
     try:
         with connection.cursor() as cursor:
-            # Verificar si el nombre de usuario existe para otro cliente
-            if username != session['username']:
-                query = "SELECT * FROM client WHERE username = %s AND client_id != %s"
-                cursor.execute(query, (username, client_id))
-                existing_user = cursor.fetchone()
-                
-                if existing_user:
-                    # Obtener los datos actuales para mostrar en el formulario
-                    query = "SELECT * FROM client WHERE client_id = %s"
-                    cursor.execute(query, (client_id,))
-                    client = cursor.fetchone()
-                    
-                    return render_template(
-                        'user/edit_profile.html',
-                        client=client,
-                        message="El nombre de usuario ya existe. Por favor, elige otro.",
-                        message_type="danger"
-                    )
+            # Se elimina la verificación de duplicidad para username
+            # (Si quieres que se verifique la duplicidad, se debe comparar el email y no el username)
             
             # Obtener datos actuales del cliente
             query = "SELECT * FROM client WHERE client_id = %s"
@@ -872,7 +762,6 @@ def update_client_profile():
             
             # Verificar contraseña actual
             stored_password = client['password']
-            
             if not bcrypt.checkpw(current_password.encode('utf-8'), stored_password.encode('utf-8')):
                 return render_template(
                     'user/edit_profile.html',
@@ -897,18 +786,16 @@ def update_client_profile():
                 # Mantener la contraseña actual
                 hashed_password = stored_password
             
-            # Actualizar datos del cliente (sin el campo name)
+            # Actualizar datos del cliente sin verificar duplicidad en username
             update_query = """
             UPDATE client 
             SET username = %s, phone = %s, password = %s
             WHERE client_id = %s
             """
-            cursor.execute(update_query, (
-                username, phone, hashed_password, client_id
-            ))
+            cursor.execute(update_query, (username, phone, hashed_password, client_id))
             connection.commit()
             
-            # Actualizar el nombre de usuario en la sesión
+            # Actualizar el nombre de usuario en la sesión (si se quiere mantener, aunque pueda duplicarse)
             session['username'] = username
             
             # Obtener los datos actualizados para mostrar en el formulario
@@ -973,27 +860,25 @@ def update_restaurant_profile():
     restaurant_id = session['restaurant_id']
     connection = db.get_connection()
     
-    # Obtener datos del formulario (incluyendo nombre y dirección)
+    # Obtener datos del formulario (incluye nuevo campo email)
     restaurant_name = request.form.get('restaurant_name')
     address = request.form.get('address')
     phone = request.form.get('phone')
     website = request.form.get('website')
     description = request.form.get('description')
+    email = request.form.get('email')  # Nuevo campo para email
     current_password = request.form.get('current_password')
     new_password = request.form.get('new_password')
     confirm_password = request.form.get('confirm_password')
     
     # Procesar la URL para asegurar formato correcto
     if website:
-        # Si la URL comienza con 'www.' y no tiene protocolo, agregarlo
         if website.startswith('www.') and not website.startswith(('http://', 'https://')):
             website = 'https://' + website
-        # Si no tiene www ni protocolo, agregar ambos
         elif not website.startswith(('http://', 'https://', 'www.')):
             website = 'https://www.' + website
-        # Si tiene www pero no protocolo
         elif website.startswith('www.'):
-            website = 'https://' + website
+            website = 'https://www.' + website
     
     try:
         with connection.cursor() as cursor:
@@ -1004,7 +889,6 @@ def update_restaurant_profile():
             
             # Verificar contraseña actual
             stored_password = restaurant['password']
-            
             if not bcrypt.checkpw(current_password.encode('utf-8'), stored_password.encode('utf-8')):
                 return render_template(
                     'restaurant/edit_profile.html',
@@ -1022,61 +906,47 @@ def update_restaurant_profile():
                         message="Las nuevas contraseñas no coinciden",
                         message_type="danger"
                     )
-                
-                # Encriptar nueva contraseña
                 hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
             else:
-                # Mantener la contraseña actual
                 hashed_password = stored_password
             
             # Manejar la imagen si se proporciona
             image = request.files.get('image')
             if image and image.filename:
-                # Importaciones necesarias para manejar archivos
                 from werkzeug.utils import secure_filename
-                import os
-                import time
-                
-                # Definir carpeta de subida si no está definida
+                import os, time
                 if not hasattr(app, 'config') or 'UPLOAD_FOLDER' not in app.config:
                     app.config['UPLOAD_FOLDER'] = 'static/img'
-                
-                # Asegurarse de que el nombre de archivo sea seguro
                 secure_filename_value = secure_filename(image.filename)
-                # Generar un nombre único basado en timestamp
                 timestamp = int(time.time())
                 filename = f"{timestamp}_{secure_filename_value}"
-                
-                # Asegurar que la carpeta existe
                 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-                
-                # Guardar la imagen
                 image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 image.save(image_path)
                 image_name = filename
             else:
-                # Mantener la imagen actual
                 image_name = restaurant['image']
             
-            # Actualizar datos del restaurante (incluyendo nombre y dirección)
+            # Actualizar datos del restaurante, incluyendo el email
             update_query = """
             UPDATE restaurant 
             SET restaurant_name = %s, address = %s, phone = %s, 
                 website = %s, description = %s, password = %s, 
-                image = %s
+                image = %s, email = %s
             WHERE restaurant_id = %s
             """
             cursor.execute(update_query, (
                 restaurant_name, address, phone, website, 
-                description, hashed_password, image_name, 
+                description, hashed_password, image_name, email, 
                 restaurant_id
             ))
             connection.commit()
             
-            # Actualizar el nombre del restaurante en la sesión
+            # Actualizar datos en la sesión: email y restaurant_name (y username si lo requieres)
             session['restaurant_name'] = restaurant_name
+            session['email'] = email
             
-            # Obtener los datos actualizados para mostrar en el formulario
+            # Obtener datos actualizados para el formulario
             query = "SELECT * FROM restaurant WHERE restaurant_id = %s"
             cursor.execute(query, (restaurant_id,))
             updated_restaurant = cursor.fetchone()

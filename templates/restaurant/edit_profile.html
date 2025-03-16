@@ -123,6 +123,13 @@
                                         <small class="form-text text-muted">Con o sin prefijos 'www.' o 'https://'</small>
                                     </div>
                                 </div>
+                                <!-- Nuevo campo para modificar email -->
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="email" class="form-label">Correo Electrónico</label>
+                                        <input type="email" class="form-control" id="email" name="email" value="{{ restaurant.email }}" required>
+                                    </div>
+                                </div>
                             </div>
                             
                             <!-- Descripción e Imagen -->
@@ -155,7 +162,7 @@
                                     <div class="col-md-12 mb-4">
                                         <div class="message text-center mb-3">
                                             <i class="bi bi-exclamation-circle-fill me-2"></i>
-                                            <span>¡Importante!</span> Completa los campos para cambiar tu contraseña o ingresa solo tu contraseña actual para confirmar otros cambios.
+                                            <span>¡Importante!</span> Completa los campos para cambiar tu contraseña o ingresa solo tu contraseña actual para confirmar otros cambios. El email actualizado se usará para tu inicio de sesión.
                                         </div>
                                     </div>
                                 </div>
@@ -181,7 +188,7 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Botón de guardar cambios (movido dentro de la pestaña de seguridad) -->
+                                <!-- Botón de guardar cambios (dentro de la pestaña de seguridad) -->
                                 <div class="text-center mt-4">
                                     <button type="submit" class="btn button-pulse btn-lg">
                                         <i class="bi bi-save"></i> Guardar Cambios
@@ -194,7 +201,7 @@
                                     <div class="col-md-12">
                                         <div class="card border-danger">
                                             <div class="card-header bg-danger text-white">
-                                                <i class="bi bi-exclamation-triangle-fill me-2"></i>Zona de peligro
+                                                <i class="bi bi-exclamation-triangle-fill me-2"></i> Zona de Peligro
                                             </div>
                                             <div class="card-body">
                                                 <h5 class="card-title">Eliminar cuenta de restaurante</h5>
@@ -209,7 +216,7 @@
                             </div>
                         </div>
                         
-                        <!-- Eliminar el botón que estaba fuera de las pestañas -->
+                        <!-- Eliminamos cualquier botón extra fuera de las pestañas -->
                     </form>
                 </div>
             </div>
@@ -228,13 +235,13 @@
                     <div class="modal-body">
                         <div class="message text-center mb-3">
                             <i class="bi bi-exclamation-circle-fill me-2"></i>
-                            <span>¡Advertencia!</span> Esta acción no se puede deshacer
+                            <span>¡Advertencia!</span> Esta acción no se puede deshacer.
                         </div>
                         <p>Al eliminar tu cuenta de restaurante:</p>
                         <ul>
-                            <li>Se eliminarán permanentemente todos tus datos</li>
-                            <li>Se cancelarán todas las reservas pendientes</li>
-                            <li>Tu perfil dejará de estar disponible en la plataforma</li>
+                            <li>Se eliminarán permanentemente todos tus datos.</li>
+                            <li>Se cancelarán todas las reservas pendientes.</li>
+                            <li>Tu perfil dejará de estar disponible en la plataforma.</li>
                         </ul>
                         <div class="form-group mb-3">
                             <label for="delete_confirm_password" class="form-label">Ingresa tu contraseña para confirmar:</label>
@@ -243,7 +250,7 @@
                         <div class="form-check mb-3">
                             <input class="form-check-input" type="checkbox" id="confirmDelete" required>
                             <label class="form-check-label" for="confirmDelete">
-                                Confirmo que quiero eliminar permanentemente mi cuenta
+                                Confirmo que quiero eliminar permanentemente mi cuenta.
                             </label>
                         </div>
                     </div>

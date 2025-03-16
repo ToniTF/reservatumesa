@@ -34,38 +34,38 @@ def home():
 def login_page():
     return render_template('user/login_user.html')
 
-@app.route('/logged_user',methods=['POST'])
+@app.route('/logged_user', methods=['POST'])
 def login():
-    #obtener los data del formulario
-    username = request.form['username'] 
+    # Obtener los datos del formulario: ahora usamos email en lugar de username
+    email = request.form['email']
     password = request.form['password']
-    #creamos la connection
+    
     connection = db.get_connection()
     try:
         with connection.cursor() as cursor:
-            #creamos la query - solo buscamos por username
-            query = "SELECT * FROM client WHERE username = %s"
-            data = (username)
-            cursor.execute(query,data)
+            # Buscar el usuario por email
+            query = "SELECT * FROM client WHERE email = %s"
+            cursor.execute(query, (email,))
             user = cursor.fetchone()
             if user:
-                # Verificamos la contraseña con bcrypt
                 stored_password = user['password'].encode('utf-8')
+                # Verificar la contraseña con bcrypt
                 if bcrypt.checkpw(password.encode('utf-8'), stored_password):
-                    #guardar data en session
-                    session['username'] = username
+                    # Guardar datos en la sesión (incluyendo username)
+                    session['email'] = email
                     session['client_id'] = user['client_id']
+                    session['username'] = user['username']  # Se guarda el username
                     return redirect(url_for('userhome'))
                 else:
-                    return render_template("user/login_user.html",message="usurario o contraseña incorrecta")
+                    return render_template("user/login_user.html", message="Email o contraseña incorrecta")
             else:
-                return render_template("user/login_user.html",message="usurario o contraseña incorrecta")
+                return render_template("user/login_user.html", message="Email o contraseña incorrecta")
     except Exception as e:
-        print("Ocurrió un error al conectar a la bbdd: ", e)
-        return render_template("home.html",mensaje="Error de conexión a la base de datos")
+        print("Ocurrió un error al conectar a la base de datos: ", e)
+        return render_template("home.html", message="Error de conexión a la base de datos")
     finally:    
         connection.close()
-        print("Conexión cerrada") 
+        print("Conexión cerrada")
                 
 @app.route('/register_user')
 def register_page():
@@ -386,38 +386,44 @@ def restaurant():
     else:
         return redirect(url_for('login_pageRest'))
     
-@app.route('/registered_user',methods=['POST'])
+@app.route('/registered_user', methods=['POST'])
 def register():
-    #obtener los data del formulario
-    username = request.form['username'] 
+    # Obtener datos del formulario
+    username = request.form['username']
     password = request.form['password']
+    password2 = request.form['password2']
     phone = request.form['phone']
-    #creamos la connection
+    email = request.form['email']
+
+    # Verificar que ambas contraseñas coincidan
+    if password != password2:
+        return render_template("user/register_user.html", message="Las contraseñas no coinciden")
+
     connection = db.get_connection()
     try:
         with connection.cursor() as cursor:
-            # Verificar si el user ya existe
-            query = "SELECT * FROM client WHERE username = %s"
-            data = (username)
-            cursor.execute(query,data)
+            # Verificar si el email ya existe (en vez de username)
+            query = "SELECT * FROM client WHERE email = %s"
+            cursor.execute(query, (email,))
             user = cursor.fetchone()
             if user:
-                return render_template("user/register_user.html",message="El usurario ya existe")
+                return render_template("user/register_user.html", message="El email ya está registrado")
             else:
-                # Hash the password
+                # Encriptar la contraseña
                 hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-                #crear la query
-                query = "INSERT INTO client (username,password,phone) VALUES (%s,%s,%s)"
-                data = (username,hashed,phone)
-                cursor.execute(query,data)
+                # Insertar el nuevo usuario (username se puede repetir)
+                query = "INSERT INTO client (username, password, phone, email) VALUES (%s, %s, %s, %s)"
+                data = (username, hashed, phone, email)
+                cursor.execute(query, data)
                 connection.commit()
-                return render_template("home.html",message="usurario registrado correctamente")
+                return render_template("home.html", message="Usuario registrado correctamente")
     except Exception as e:
-        print("Ocurrió un error al conectar a la bbdd: ", e)
+        print("Ocurrió un error al conectar a la base de datos: ", e)
+        return render_template("user/register_user.html", message="Error al registrar el usuario")
     finally:
         connection.close()
         print("Conexión cerrada")
-        
+
 @app.route('/registered_restaurant',methods=['POST'])
 def registerRest():
     #obtener los datos del formulario

@@ -124,6 +124,34 @@
                 width: 50%; /* Asegurar que solo ocupen la mitad del ancho en móviles */
             }
         }
+        /* Ajustar el contenedor principal para dar más espacio a la izquierda */
+        .cuisine-selector .row {
+            margin-right: 0;
+            margin-left: -5px; /* Mover un poco más a la izquierda */
+            width: 100%;
+        }
+        
+        /* Reducir el padding izquierdo de las columnas */
+        .cuisine-selector .col-lg-4,
+        .cuisine-selector .col-md-6,
+        .cuisine-selector .col-sm-6 {
+            padding-left: 3px; /* Reducir el padding izquierdo */
+            padding-right: 5px;
+        }
+        
+        /* Ajustar el contenedor de cada checkbox */
+        .cuisine-selector .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 0; /* Eliminar el padding izquierdo predeterminado */
+        }
+        
+        /* Ajustar el espacio entre el borde del contenedor y el primer elemento */
+        .cuisine-selector {
+            padding-left: 10px !important; /* Anular cualquier otro padding */
+        }
     </style>
 </head>
 <body>

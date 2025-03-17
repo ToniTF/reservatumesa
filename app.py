@@ -203,7 +203,19 @@ def loginRest():
 
 @app.route('/register_restaurant')
 def register_pageRest():
-    return render_template('restaurant/register_restaurant.html')
+    connection = db.get_connection()
+    try:
+        with connection.cursor() as cursor:
+            # Obtener todos los tipos de cocina para el selector
+            cursor.execute("SELECT * FROM cuisine_type ORDER BY cuisine_name")
+            cuisine_types = cursor.fetchall()
+            
+            return render_template('restaurant/register_restaurant.html', cuisine_types=cuisine_types)
+    except Exception as e:
+        print("Error al cargar tipos de cocina:", e)
+        return render_template('restaurant/register_restaurant.html')
+    finally:
+        connection.close()
 
         
 @app.route('/registered_restaurant', methods=['POST'])
@@ -211,8 +223,8 @@ def register_restaurant():
     # Obtener datos del formulario
     username = request.form['username']
     password = request.form['password']
-    password2 = request.form['password2']  # Contraseña repetida
-    email = request.form['email']          # Nuevo campo
+    password2 = request.form['password2']
+    email = request.form['email']
     restaurant_name = request.form['name']
     phone = request.form['phone']
     address = request.form['address']
@@ -220,53 +232,90 @@ def register_restaurant():
     capacity = request.form['capacity']
     description = request.form['description']
     
-    # Verificar que ambas contraseñas sean idénticas
+    # Obtener tipos de cocina seleccionados
+    cuisine_ids = request.form.getlist('cuisine_ids')
+    
+    # Verificar contraseñas
     if password != password2:
-        return render_template("restaurant/register_restaurant.html", mensaje="Las contraseñas no coinciden")
+        connection = db.get_connection()
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM cuisine_type ORDER BY cuisine_name")
+                cuisine_types = cursor.fetchall()
+                return render_template("restaurant/register_restaurant.html", 
+                                      mensaje="Las contraseñas no coinciden",
+                                      cuisine_types=cuisine_types)
+        finally:
+            connection.close()
     
     connection = db.get_connection()
     try:
         with connection.cursor() as cursor:
-            # Verificar si el email ya está registrado
+            # Verificar si el email existe
             query = "SELECT * FROM restaurant WHERE email = %s"
             cursor.execute(query, (email,))
             user = cursor.fetchone()
+            
             if user:
-                return render_template("restaurant/register_restaurant.html", mensaje="El email ya está registrado")
+                cursor.execute("SELECT * FROM cuisine_type ORDER BY cuisine_name")
+                cuisine_types = cursor.fetchall()
+                return render_template("restaurant/register_restaurant.html", 
+                                      mensaje="El email ya está registrado",
+                                      cuisine_types=cuisine_types)
             else:
-                # Manejar la imagen si se proporciona
+                # Encriptar contraseña
+                hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+                
+                # Manejar la imagen
                 image = request.files.get('restaurant_image')
-                if image and image.filename and allowed_file(image.filename):
-                    # Si se ha subido una imagen válida
+                if image and image.filename:
                     from werkzeug.utils import secure_filename
                     import os, time
                     secure_filename_value = secure_filename(image.filename)
                     timestamp = int(time.time())
                     filename = f"{timestamp}_{secure_filename_value}"
-                    # Crear directorio si no existe
                     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
                     image_path = os.path.join(UPLOAD_FOLDER, filename)
                     image.save(image_path)
                     image_name = filename
                 else:
-                    # Si no se sube una imagen, asignar la imagen por defecto
                     image_name = "aquitulogo-27.webp"
                 
-                # Encriptar la contraseña
-                hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-                
-                # Modificar la consulta para incluir el campo image
+                # Insertar restaurante
                 query = """
-                    INSERT INTO restaurant (username, password, restaurant_name, phone, address, website, capacity, description, email, image)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO restaurant (username, password, restaurant_name, phone, address, 
+                                      website, capacity, description, email, image)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """
-                data = (username, hashed, restaurant_name, phone, address, website, capacity, description, email, image_name)
-                cursor.execute(query, data)
+                cursor.execute(query, (
+                    username, hashed, restaurant_name, phone, address,
+                    website, capacity, description, email, image_name
+                ))
+                
+                # Obtener el ID del restaurante recién insertado
+                restaurant_id = cursor.lastrowid
+                
+                # Insertar los tipos de cocina seleccionados
+                if cuisine_ids:
+                    for cuisine_id in cuisine_ids:
+                        cursor.execute(
+                            "INSERT INTO restaurant_cuisine (restaurant_id, cuisine_id) VALUES (%s, %s)",
+                            (restaurant_id, cuisine_id)
+                        )
+                
                 connection.commit()
                 return render_template("home.html", mensaje="Restaurante registrado correctamente")
     except Exception as e:
-        print("Ocurrió un error al registrar: ", e)
-        return render_template("restaurant/register_restaurant.html", mensaje="Error al registrar el restaurante")
+        connection.rollback()
+        print("Error al registrar restaurante:", e)
+        
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM cuisine_type ORDER BY cuisine_name")
+        cuisine_types = cursor.fetchall()
+        
+        return render_template("restaurant/register_restaurant.html", 
+                              mensaje=f"Error al registrar el restaurante: {str(e)}",
+                              cuisine_types=cuisine_types)
     finally:
         connection.close()
 

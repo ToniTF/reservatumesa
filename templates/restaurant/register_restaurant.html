@@ -49,6 +49,29 @@
         .custom-file-input:hover {
             background-color: var(--accent-color);
         }
+        /* Estilos mejorados para los tipos de cocina - solo espaciado y alineación */
+        .cuisine-selector .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .cuisine-selector .form-check-input {
+            margin-right: 8px; /* Aumenta el espacio entre checkbox y texto */
+            margin-top: 0; /* Elimina el margen superior predeterminado */
+        }
+        
+        .cuisine-selector .form-check-label {
+            font-size: 0.8rem; /* Texto más pequeño */
+            margin-bottom: 0;
+            padding-bottom: 30px; /* Ajuste fino para centrar verticalmente */
+            color: black; /* Mantiene el color del texto original */
+        }
+        
+        /* Estilo para el texto del encabezado */
+        #step3 h4 {
+            color: black; /* Mantiene el color original */
+        }
     </style>
 </head>
 <body>
@@ -81,7 +104,8 @@
                 <div class="step-indicators mb-4">
                     <div class="step active" data-step="1">1. Cuenta</div>
                     <div class="step" data-step="2">2. Información básica</div>
-                    <div class="step" data-step="3">3. Detalles</div>
+                    <div class="step" data-step="3">3. Tipos de cocina</div>
+                    <div class="step" data-step="4">4. Detalles</div>
                 </div>
                 
                 <form action="/registered_restaurant" method="POST" id="registrationForm" enctype="multipart/form-data">
@@ -136,8 +160,37 @@
                         </div>
                     </div>
                     
-                    <!-- Step 3: Additional details -->
+                    <!-- Step 3: Tipos de cocina -->
                     <div class="form-step" id="step3">
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <h4>Selecciona los tipos de cocina que ofrece tu restaurante</h4>
+                                <p class="text-muted">Puedes seleccionar varios tipos de cocina</p>
+                            </div>
+                        </div>
+                        <div class="cuisine-selector border rounded p-3" style="max-height: 300px; overflow-y: auto; background-color: rgba(255, 255, 255, 0.1);">
+                            <div class="row">
+                                {% for cuisine in cuisine_types %}
+                                    <div class="col-md-4 col-sm-6 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="cuisine_ids" 
+                                                id="cuisine{{ cuisine.cuisine_id }}" value="{{ cuisine.cuisine_id }}">
+                                            <label class="form-check-label" for="cuisine{{ cuisine.cuisine_id }}">
+                                                {{ cuisine.cuisine_name }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="form-navigation mt-4">
+                            <button type="button" class="btn prev-step"><i class="bi bi-arrow-left"></i> Anterior</button>
+                            <button type="button" class="btn next-step">Siguiente <i class="bi bi-arrow-right"></i></button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 4: Additional details -->
+                    <div class="form-step" id="step4">
                         <div class="row">
                             <div class="col-md-6">
                                 <label for="website">Website</label>

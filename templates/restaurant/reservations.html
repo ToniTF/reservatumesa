@@ -47,7 +47,7 @@
                 <h1 class="text-center mb-5">Reservas de {{ restaurant.restaurant_name }}</h1>
                 
                 <!-- Selección de fecha -->
-                <div class="row justify-content-left mb-5">
+                <div class="row align-items-center justify-content-left mb-5">
     <!-- Columna izquierda: Formulario de fecha y botones -->
     <div class="col-md-6">
         <form action="/restaurant/reservations/" method="get" id="date-form" style="margin: 0!important;">
@@ -57,7 +57,7 @@
                 </div>
             </div>
             
-            <!-- Botones dentro del formulario con mejor estructura -->
+            <!-- Botones dentro del formulario -->
             <div class="d-flex justify-content-center gap-3">
                 <button type="button" id="viewReservationsBtn" class="btn button-pulse">
                     <i class="bi bi-calendar-check"></i><span>Reservas</span>

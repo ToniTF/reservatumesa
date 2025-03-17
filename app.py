@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.secret_key = Config.SECRET_KEY  # Set the secret key from Config
 
 # Configuración para la carga de archivos
-UPLOAD_FOLDER = os.path.join('static', 'img', 'restaurants')
+UPLOAD_FOLDER = os.path.join('static', 'img')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
 # Asegurarse de que la carpeta existe

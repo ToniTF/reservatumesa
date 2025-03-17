@@ -74,21 +74,60 @@ def register_page():
 @app.route('/userhome')
 def userhome():
     if 'username' in session:
-        # coger la lista de restaurantes y sus data
+        # Obtener los IDs de cocina seleccionados
+        selected_cuisines = request.args.getlist('cuisine_ids')
+        
         connection = db.get_connection()
         try:
             with connection.cursor() as cursor:
-                query = "SELECT * FROM restaurant ORDER BY restaurant_name ASC"
-                cursor.execute(query)
+                # Obtener todos los tipos de cocina para el filtro
+                cursor.execute("SELECT * FROM cuisine_type ORDER BY cuisine_name")
+                cuisine_types = cursor.fetchall()
+                
+                # Construir la consulta según los filtros seleccionados
+                if selected_cuisines:
+                    # Si hay filtros seleccionados, buscar restaurantes con esos tipos de cocina
+                    placeholders = ", ".join(["%s"] * len(selected_cuisines))
+                    query = f"""
+                    SELECT DISTINCT r.* FROM restaurant r
+                    JOIN restaurant_cuisine rc ON r.restaurant_id = rc.restaurant_id
+                    WHERE rc.cuisine_id IN ({placeholders})
+                    ORDER BY r.restaurant_name
+                    """
+                    cursor.execute(query, selected_cuisines)
+                else:
+                    # Si no hay filtros, mostrar todos los restaurantes
+                    query = "SELECT * FROM restaurant ORDER BY restaurant_name ASC"
+                    cursor.execute(query)
+                
                 restaurants = cursor.fetchall()
-                return render_template('user/home.html',restaurants=restaurants)
+                
+                # Para cada restaurante, obtener sus tipos de cocina
+                for restaurant in restaurants:
+                    try:
+                        cuisine_query = """
+                        SELECT ct.cuisine_name FROM cuisine_type ct
+                        JOIN restaurant_cuisine rc ON ct.cuisine_id = rc.cuisine_id
+                        WHERE rc.restaurant_id = %s
+                        """
+                        cursor.execute(cuisine_query, (restaurant['restaurant_id'],))
+                        cuisine_results = cursor.fetchall()
+                        restaurant['cuisine_types'] = [cuisine['cuisine_name'] for cuisine in cuisine_results]
+                    except:
+                        restaurant['cuisine_types'] = []
+                
+                return render_template('user/home.html', 
+                                      restaurants=restaurants, 
+                                      cuisine_types=cuisine_types, 
+                                      selected_cuisines=selected_cuisines)
         except Exception as e:
             print("Ocurrió un error al conectar a la bbdd: ", e)
+            return render_template('user/home.html', message=f"Error al cargar restaurantes: {e}")
         finally:
             connection.close()
             print("Conexión cerrada")
     else:
-        return redirect(url_for('home')) 
+        return redirect(url_for('home'))
     
     
 @app.route('/restaurant/<int:restaurant_id>')

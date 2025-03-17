@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 17-03-2025 a las 12:45:06
+-- Tiempo de generación: 17-03-2025 a las 19:57:10
 -- Versión del servidor: 9.1.0
 -- Versión de PHP: 8.3.14
 
@@ -56,81 +56,6 @@ INSERT INTO `client` (`client_id`, `username`, `password`, `email`, `phone`) VAL
 
 -- --------------------------------------------------------
 
---
--- Estructura de tabla para la tabla `cuisine_type`
---
-
-DROP TABLE IF EXISTS `cuisine_type`;
-CREATE TABLE IF NOT EXISTS `cuisine_type` (
-  `cuisine_id` int NOT NULL AUTO_INCREMENT,
-  `cuisine_name` varchar(50) NOT NULL,
-  `description` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`cuisine_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Volcado de datos para la tabla `cuisine_type`
---
-
-INSERT INTO `cuisine_type` (`cuisine_id`, `cuisine_name`, `description`) VALUES
-(1, 'Mediterránea', NULL),
-(2, 'Italiana', NULL),
-(3, 'Japonesa', NULL),
-(4, 'Mexicana', NULL),
-(5, 'China', NULL),
-(6, 'India', NULL),
-(7, 'Vegana', NULL),
-(8, 'Americana', NULL),
-(9, 'Española', NULL),
-(10, 'Fusión', NULL),
-(11, 'Internacional', NULL),
-(12, 'Tailandesa', NULL),
-(13, 'Árabe', NULL),
-(14, 'Peruana', NULL),
-(15, 'Local/Regional', NULL),
-(16, 'Rápida', NULL),
-(17, 'Saludable', NULL),
-(18, 'Vegetariana', NULL),
-(19, 'Orgánica', NULL),
-(20, 'Casera', NULL),
-(21, 'Gourmet', NULL),
-(22, 'Parrilla', NULL),
-(23, 'Mariscos', NULL),
-(24, 'Postres', NULL),
-(25, 'Sudamérica', NULL),
-(26, 'Sin gluten', NULL),
-(27, 'Sin lactosa', NULL);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `reservation`
---
-
-DROP TABLE IF EXISTS `reservation`;
-CREATE TABLE IF NOT EXISTS `reservation` (
-  `reservation_id` int NOT NULL AUTO_INCREMENT,
-  `client_id` int NOT NULL,
-  `restaurant_id` int NOT NULL,
-  `diners` int NOT NULL,
-  `date` date NOT NULL,
-  `time` time NOT NULL,
-  `status` enum('pendiente','confirmada','cancelada') COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`reservation_id`),
-  KEY `client_id` (`client_id`),
-  KEY `restaurant_id` (`restaurant_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `reservation`
---
-
-INSERT INTO `reservation` (`reservation_id`, `client_id`, `restaurant_id`, `diners`, `date`, `time`, `status`) VALUES
-(22, 18, 31, 2, '2025-03-17', '20:30:00', ''),
-(23, 18, 31, 4, '2025-03-18', '13:00:00', ''),
-(24, 18, 31, 6, '2025-03-26', '13:30:00', '');
-
--- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `restaurant`
@@ -179,6 +104,53 @@ INSERT INTO `restaurant` (`restaurant_id`, `username`, `email`, `password`, `pho
 (20, 'CucharaDeOro', 'cucharadeoro@gmail.com', '$2b$12$OjezuacEZf0Vk0xrV/V9DeDryFZogkHfmtq17QjqJPUkYkRJzkqKC', '679 543 876', 'Cuchara de Oro', 25, 'www.cucharadeoro.com', 'Calle de la Abuela, 6', 'Comida casera con recetas tradicionales y sopas abundantes.', 'cucharadeoro.jpg'),
 (31, 'Admin', 'adminrest@adminrest.com', '$2b$12$spFmCUXai29gSUGtJ917TObSqXtamTtiznSANxIOLmsvzsDNYAOHC', '986256987', 'ABC', 45, 'www.abc.com', 'Abecedario, 36', 'Comida con todas las letras.', 'aquitulogo-27.webp');
 
+
+
+--
+-- Estructura de tabla para la tabla `cuisine_type`
+--
+
+DROP TABLE IF EXISTS `cuisine_type`;
+CREATE TABLE IF NOT EXISTS `cuisine_type` (
+  `cuisine_id` int NOT NULL AUTO_INCREMENT,
+  `cuisine_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  PRIMARY KEY (`cuisine_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `cuisine_type`
+--
+
+INSERT INTO `cuisine_type` (`cuisine_id`, `cuisine_name`, `description`) VALUES
+(1, 'Mediterránea', NULL),
+(2, 'Italiana', NULL),
+(3, 'Japonesa', NULL),
+(4, 'Mexicana', NULL),
+(5, 'China', NULL),
+(6, 'India', NULL),
+(7, 'Vegana', NULL),
+(8, 'Americana', NULL),
+(9, 'Española', NULL),
+(10, 'Fusión', NULL),
+(11, 'Internacional', NULL),
+(12, 'Tailandesa', NULL),
+(13, 'Árabe', NULL),
+(14, 'Peruana', NULL),
+(15, 'Local/Regional', NULL),
+(16, 'Rápida', NULL),
+(17, 'Saludable', NULL),
+(18, 'Vegetariana', NULL),
+(19, 'Orgánica', NULL),
+(20, 'Casera', NULL),
+(21, 'Gourmet', NULL),
+(22, 'Parrilla', NULL),
+(23, 'Mariscos', NULL),
+(24, 'Postres', NULL),
+(25, 'Sudamérica', NULL),
+(26, 'Sin gluten', NULL),
+(27, 'Sin lactosa', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -191,7 +163,7 @@ CREATE TABLE IF NOT EXISTS `restaurant_cuisine` (
   `cuisine_id` int NOT NULL,
   PRIMARY KEY (`restaurant_id`,`cuisine_id`),
   KEY `cuisine_id` (`cuisine_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `restaurant_cuisine`
@@ -247,10 +219,32 @@ INSERT INTO `restaurant_cuisine` (`restaurant_id`, `cuisine_id`) VALUES
 (32, 20),
 (32, 22);
 
---
--- Restricciones para tablas volcadas
+
 --
 
+
+-- Estructura de tabla para la tabla `reservation`
+--
+
+DROP TABLE IF EXISTS `reservation`;
+CREATE TABLE IF NOT EXISTS `reservation` (
+  `reservation_id` int NOT NULL AUTO_INCREMENT,
+  `client_id` int NOT NULL,
+  `restaurant_id` int NOT NULL,
+  `diners` int NOT NULL,
+  `date` date NOT NULL,
+  `time` time NOT NULL,
+  `status` enum('pendiente','confirmada','cancelada') COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`reservation_id`),
+  KEY `client_id` (`client_id`),
+  KEY `restaurant_id` (`restaurant_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+-- --------------------------------------------------------
+--
+-- Restricciones para tablas volcadas
 --
 -- Filtros para la tabla `reservation`
 --
@@ -258,6 +252,8 @@ ALTER TABLE `reservation`
   ADD CONSTRAINT `reservation_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `client` (`client_id`),
   ADD CONSTRAINT `reservation_ibfk_2` FOREIGN KEY (`restaurant_id`) REFERENCES `restaurant` (`restaurant_id`);
 COMMIT;
+--
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

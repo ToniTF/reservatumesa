@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 16-03-2025 a las 23:16:21
+-- Tiempo de generación: 17-03-2025 a las 12:45:06
 -- Versión del servidor: 9.1.0
 -- Versión de PHP: 8.3.14
 
@@ -83,21 +83,21 @@ INSERT INTO `cuisine_type` (`cuisine_id`, `cuisine_name`, `description`) VALUES
 (8, 'Americana', NULL),
 (9, 'Española', NULL),
 (10, 'Fusión', NULL),
-(11, 'Cocina Internacional', NULL),
+(11, 'Internacional', NULL),
 (12, 'Tailandesa', NULL),
 (13, 'Árabe', NULL),
 (14, 'Peruana', NULL),
-(15, 'Cocina Local/Regional', NULL),
-(16, 'Comida rápida', NULL),
-(17, 'Comida saludable', NULL),
+(15, 'Local/Regional', NULL),
+(16, 'Rápida', NULL),
+(17, 'Saludable', NULL),
 (18, 'Vegetariana', NULL),
 (19, 'Orgánica', NULL),
-(20, 'Comida casera', NULL),
-(21, 'Comida gourmet', NULL),
+(20, 'Casera', NULL),
+(21, 'Gourmet', NULL),
 (22, 'Parrilla', NULL),
 (23, 'Mariscos', NULL),
 (24, 'Postres', NULL),
-(25, 'Vegetariano', NULL),
+(25, 'Sudamérica', NULL),
 (26, 'Sin gluten', NULL),
 (27, 'Sin lactosa', NULL);
 
@@ -150,7 +150,7 @@ CREATE TABLE IF NOT EXISTS `restaurant` (
   `description` text COLLATE utf8mb4_general_ci,
   `image` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`restaurant_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `restaurant`
@@ -173,7 +173,7 @@ INSERT INTO `restaurant` (`restaurant_id`, `username`, `email`, `password`, `pho
 (14, 'ChocoLoco', 'chocoloco@gmail.com', '$2b$12$oUf90qNOxvg0zN/Evy1wSutwcDqX9VZr/6Tbbg8KW3m3v6CFsiqGS', '689 567 890', 'ChocoLoco', 15, 'www.chocoloco.com', ' Calle del Cacao, 50', 'Postres y bebidas de chocolate en todas sus formas.', 'chocoloco.jpg'),
 (15, 'PatataBrava', 'patatabrava@gmail.com', '$2b$12$QZGnKwQ/7XOcNcoqyn6mhuAidYlti/FQU1Snex52TFx2xDj6Bb3Py', '674 678 321', 'Patata Brava', 20, 'www.patatabrava.com', 'Avenida de las Tapas, 8', 'Especialidad en patatas bravas con salsas caseras.', 'patatabrava.jpg'),
 (16, 'Marisquito', 'marisquito@gmail.com', '$2b$12$.ko315AkJ//Xqyijaa2pbObBmZxAYvGSgK409gsElRCC0zAk1FF0e', '663 345 987', 'Marisquito', 35, 'www.marisquito.com', 'Paseo Marítimo, 17', 'Mariscos frescos y paellas con ingredientes de primera calidad.', 'marisquito.jpg'),
-(17, 'ArepaFest', 'arepafest@gmail.com', '$2b$12$7TXLFLEAIhMzCa21qrMAyuBBTBeOdVwJL.bj/67PWIQI7cPV10WhK', ' 611 789 234', 'Arepa Fest', 25, 'www.arepafest.com', 'Calle de la Harina, 22', ' Arepas rellenas al mejor estilo venezolano y colombiano.', 'arepafest.jpg'),
+(17, 'ArepaFest', 'arepafest@gmail.com', '$2b$12$7TXLFLEAIhMzCa21qrMAyuBBTBeOdVwJL.bj/67PWIQI7cPV10WhK', ' 611 789 234', 'Arepa Fest', 25, 'https://www.arepafest.com', 'Calle de la Harina, 22', ' Arepas rellenas al mejor estilo venezolano y colombiano.', 'arepafest.jpg'),
 (18, 'RolloPrimavera', 'rolloprimavera@gmail.com', '$2b$12$ErHvLb2lJ2mV3v2aVO9hCOs1ZyMx5bWkJJX6nIVC7dwUOe.koOxZ2', '648 654 789', 'Rollo Primavera', 30, 'www.rolloprimavera.com', 'Barrio Chino, 29', 'ocina asiática con especialidad en rollitos de primavera y dumplings.', 'rolloprimavera.jpg'),
 (19, 'TodoAlHorno', 'todoalhorno@gmail.com', '$2b$12$hsiO8pmRbzd/G7e6NR0PYOzk7HK7lkwc5eIsiaMylBVfPdLdN215S', '630 876 210', 'Todo al Horno', 40, ' www.todoalhorno.com', 'Calle del Fuego, 77', 'Platos cocinados al horno para una experiencia sin frituras.', 'todoalhorno.jpg'),
 (20, 'CucharaDeOro', 'cucharadeoro@gmail.com', '$2b$12$OjezuacEZf0Vk0xrV/V9DeDryFZogkHfmtq17QjqJPUkYkRJzkqKC', '679 543 876', 'Cuchara de Oro', 25, 'www.cucharadeoro.com', 'Calle de la Abuela, 6', 'Comida casera con recetas tradicionales y sopas abundantes.', 'cucharadeoro.jpg'),
@@ -192,6 +192,60 @@ CREATE TABLE IF NOT EXISTS `restaurant_cuisine` (
   PRIMARY KEY (`restaurant_id`,`cuisine_id`),
   KEY `cuisine_id` (`cuisine_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `restaurant_cuisine`
+--
+
+INSERT INTO `restaurant_cuisine` (`restaurant_id`, `cuisine_id`) VALUES
+(1, 1),
+(1, 9),
+(2, 4),
+(2, 11),
+(3, 8),
+(3, 16),
+(4, 2),
+(4, 16),
+(4, 26),
+(5, 8),
+(5, 16),
+(6, 15),
+(6, 16),
+(7, 3),
+(7, 10),
+(7, 11),
+(8, 2),
+(8, 26),
+(9, 11),
+(9, 12),
+(10, 22),
+(11, 15),
+(11, 22),
+(12, 9),
+(12, 15),
+(12, 19),
+(13, 7),
+(13, 17),
+(13, 18),
+(14, 24),
+(14, 26),
+(14, 27),
+(15, 9),
+(15, 15),
+(16, 1),
+(16, 23),
+(17, 8),
+(17, 11),
+(18, 5),
+(19, 15),
+(19, 22),
+(20, 9),
+(20, 15),
+(20, 17),
+(32, 9),
+(32, 15),
+(32, 20),
+(32, 22);
 
 --
 -- Restricciones para tablas volcadas

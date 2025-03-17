@@ -52,25 +52,77 @@
         /* Estilos mejorados para los tipos de cocina - solo espaciado y alineación */
         .cuisine-selector .form-check {
             display: flex;
-            align-items: center;
+            align-items: center; /* Usar center en lugar de flex-start */
             margin-bottom: 8px;
+            position: relative; /* Posicionamiento relativo para control más preciso */
         }
         
         .cuisine-selector .form-check-input {
-            margin-right: 8px; /* Aumenta el espacio entre checkbox y texto */
-            margin-top: 0; /* Elimina el margen superior predeterminado */
+            margin: 0;
+            padding: 0;
+            flex-shrink: 0;
+            width: 16px;
+            height: 16px;
+            position: relative; /* Mantener posicionamiento relativo */
         }
         
         .cuisine-selector .form-check-label {
-            font-size: 0.8rem; /* Texto más pequeño */
-            margin-bottom: 0;
-            padding-bottom: 30px; /* Ajuste fino para centrar verticalmente */
-            color: black; /* Mantiene el color del texto original */
+            margin: 0 0 0 8px; /* Simplificar: usar margen izquierdo en lugar de margin-right en el input */
+            padding: 0;
+            font-size: 0.85rem;
+            color: black;
+            line-height: 1; /* Línea de altura exacta */
+            display: inline-block; /* Mejor control sobre el texto */
+            vertical-align: middle; /* Alineación vertical */
         }
         
         /* Estilo para el texto del encabezado */
         #step3 h4 {
             color: black; /* Mantiene el color original */
+        }
+
+        /* Modificar los estilos existentes para evitar el scroll horizontal */
+    
+        /* Ajustar el ancho de los elementos en el selector de cocina */
+        .cuisine-selector .row {
+            margin-right: 0;
+            margin-left: 0;
+            width: 100%;
+        }
+        
+        .cuisine-selector .col-md-4 {
+            padding-right: 5px;
+            padding-left: 5px;
+        }
+        
+        /* Asegurar que la tabla de cocina no exceda su contenedor */
+        .cuisine-selector {
+            max-width: 100%;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        /* Ajustar el espacio entre los checkboxes y las etiquetas */
+        .cuisine-selector .form-check-label {
+            font-size: 0.8rem; /* Reducir ligeramente el tamaño de la fuente */
+            white-space: nowrap; /* Evitar saltos de línea dentro de las etiquetas */
+            overflow: hidden;
+            text-overflow: ellipsis; /* Mostrar puntos suspensivos si el texto es muy largo */
+            max-width: calc(100% - 25px); /* Limitar el ancho máximo de la etiqueta */
+        }
+        
+        /* Asegurar que todos los elementos respeten el padding del contenedor */
+        .container.page-transition {
+            padding-right: 15px;
+            padding-left: 15px;
+            overflow-x: hidden; /* Forzar que no haya scroll horizontal */
+        }
+        
+        /* Ajustar el ancho de la columna en pantallas pequeñas */
+        @media (max-width: 768px) {
+            .col-md-4.col-sm-6 {
+                width: 50%; /* Asegurar que solo ocupen la mitad del ancho en móviles */
+            }
         }
     </style>
 </head>
@@ -168,10 +220,10 @@
                                 <p class="text-muted">Puedes seleccionar varios tipos de cocina</p>
                             </div>
                         </div>
-                        <div class="cuisine-selector border rounded p-3" style="max-height: 300px; overflow-y: auto; background-color: rgba(255, 255, 255, 0.1);">
-                            <div class="row">
+                        <div class="cuisine-selector border rounded p-3" style="max-height: 300px; overflow-y: auto; background-color: rgba(255, 255, 255, 0.1); overflow-x: hidden;">
+                            <div class="row g-1"> <!-- Reducir el espaciado entre filas con g-1 -->
                                 {% for cuisine in cuisine_types %}
-                                    <div class="col-md-4 col-sm-6 mb-2">
+                                    <div class="col-lg-4 col-md-6 col-sm-6 mb-1"> <!-- Cambiar a col-md-6 y agregar col-lg-4 -->
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="cuisine_ids" 
                                                 id="cuisine{{ cuisine.cuisine_id }}" value="{{ cuisine.cuisine_id }}">

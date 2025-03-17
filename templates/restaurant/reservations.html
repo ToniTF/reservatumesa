@@ -77,10 +77,12 @@
         </div>
     </div>
     
-    <!-- Columna derecha: Imagen del restaurante -->
-    <div class="col-md-6 text-center">
+    <!-- Columna derecha: Imagen del restaurante con borde rojo ajustado al tamaño de la imagen y esquinas redondeadas -->
+<div class="col-md-6 d-flex justify-content-center align-items-center">
+    <div style="display: inline-block; border: 2px dashed red; padding: 7px; border-radius: 15px;">
         <img src="{{ url_for('static', filename='img/' + restaurant.image) }}" alt="Imagen del restaurante" class="img-fluid" style="max-height:300px;">
     </div>
+</div>
 </div>
                 
                 {% if reservations %}

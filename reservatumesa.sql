@@ -55,7 +55,53 @@ INSERT INTO `client` (`client_id`, `username`, `password`, `email`, `phone`) VAL
 (18, 'Toni', '$2b$12$TzLs44p.z1sPuOfLriJQ7.6L1NYEcwWMd/Y0A0g2uCZY5re1zvGGm', 'admin@admin.es', '986458784');
 
 -- --------------------------------------------------------
+-- Estructura de tabla para la tabla `restaurant`
+--
 
+DROP TABLE IF EXISTS `restaurant`;
+CREATE TABLE IF NOT EXISTS `restaurant` (
+  `restaurant_id` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `email` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `phone` varchar(15) COLLATE utf8mb4_general_ci NOT NULL,
+  `restaurant_name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `capacity` int NOT NULL,
+  `website` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `address` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `description` text COLLATE utf8mb4_general_ci,
+  `image` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  PRIMARY KEY (`restaurant_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `restaurant`
+--
+
+INSERT INTO `restaurant` (`restaurant_id`, `username`, `email`, `password`, `phone`, `restaurant_name`, `capacity`, `website`, `address`, `description`, `image`) VALUES
+(1, 'ElReyDelBuffet ', 'elreydelbuffet@gmail.com', '$2b$12$GayWUl0kaswQoKBKla8xtO4vU1S4DfJyll1BAi/HZFkq/hE.lEVyC', '678 901 234', 'El Rey del Buffet', 40, 'www.reydelbuffet.com', 'Calle del Atracón, 12', 'Buffet libre con más de 100 platos, postres ilimitados y bebidas incluidas.', 'elreydelbuffet.jpg'),
+(2, 'TacoLcoco ', 'tacolcoco@gmail.com', '$2b$12$etyFl4lBbHztCrApxTQfsOLilAZ1CXiJUpX.NAcJ4nHer4Lal6lae', '612 345 678', 'Taco Locco', 30, 'www.tacolocco.com', 'Avenida Picante, 45', 'Auténtica comida mexicana, tacos al pastor y nachos con queso fundido.', 'tacoloco.jpg'),
+(3, 'FritangaVIP', 'fritangavip@gmail.com', '$2b$12$bbdvUtEK4nbZemOGQeANwu8kB6xdJ31YkHmh6RHEAgHU.d.wv7dyi', '645 789 123', 'Fritanga VIP', 25, 'www.fritangavip.com', 'Plaza del Aceite, 7', 'Especialidad en frituras de todo tipo, desde calamares hasta churros rellenos.', 'fritangavip.jpg'),
+(4, 'Pizzarollit0', 'pizzarolli0@gmail.com', '$2b$12$QkjT3JbNn9BgKQpZHWoFkORaW.HGdQLEWx0zh8sR1BsYLjC7s1yhq', '690 234 567', 'Pizzarollito', 35, 'www.pizzarollito.com', 'Calle de la Masa, 99', 'Pizzería artesanal con horno de leña y opciones veganas.', 'pizzarolito.jpg'),
+(5, 'HamburQueen', 'hamburqueen@gmail.com', '$2b$12$ueTa8wwQ6/oOsfmcGUjI4uE35xQeb/flqad69wqWK2wJomZaddb8e', '655 876 432', 'HamburQueen', 40, 'www.hamburqueen.com', 'Paseo del Sabor, 21', 'Hamburguesas gourmet con ingredientes premium y salsas caseras.', 'hamburqueen.jpg'),
+(6, 'ComeQueTeVas', 'comequetevas@gmail.com', '$2b$12$Rbu2StmZbyxJGWLN..SLEu0c58/fCVdrnaV2xAKcZzlLryHsizzuO', ' 687 321 098', 'Come Que Te Vas', 20, 'www.comequetevas.com', 'Camino del Hambre, 5', 'Menús rápidos para los que tienen prisa, sin perder sabor.', 'comequetevas.jpg'),
+(7, 'SushiMunchies', 'sushimunchies@gmail.com', '$2b$12$TM1vlnYIiYvPSOXeD9son.pOU.2dfWTnveltwDHv/7Ja4YlP/j8Be', '620 654 321', 'Sushi Munchies', 30, 'www.sushimunchies.com', 'Calle de la Soja, 10', 'Sushi fusión con opciones innovadoras y sabores únicos.', 'sushimunchies.jpg'),
+(8, 'GordiPasta', 'gordipasta@gmail.com', '$2b$12$8zPWG7a30nQWGWgJeVuee.7qoRvkVSFOrMGAKKv11po0tsBs2gGpq', '699 210 876', 'GordiPasta', 25, 'www.gordipasta.com', 'Avenida Italiana, 88', 'Pastas caseras con salsas abundantes y pan de ajo ilimitado.', 'gordipasta.jpg'),
+(9, 'WokAndRoll', 'wokandroll@gmail.com', '$2b$12$/MxUnez8Yyfhq3.zGrvqi.9K/jOKU.mIdxEdQVBVgcHT3P.tW33ly', '635 543 210', 'Wok & Roll', 30, 'www.wokandroll.com', 'Calle del Dragón, 23', 'Cocina asiática al wok con ingredientes frescos y show en vivo.', 'wokandroll.jpg'),
+(10, 'PollosLocos', 'polloslocos@gmail.com', '$2b$12$gmJiiUwrP/H7VPwlN3l0qu/bnF4KMmcacHILGt2z07wLzpN9PK0Te', '670 876 543', 'Pollos Locos', 40, 'www.polloslocos.com', ' Plaza del Asador, 14', 'Especialistas en pollo frito crujiente y salsas caseras.', 'polloslocos.jpg'),
+(11, 'CarnivoroXtreme', 'carnivoroextreme@gmail.com', '$2b$12$qa6mGPG0IdSOLiyh/V0UjuOZkoxb1FYGhn8rXUup1RF6qhmbjAG3K', '658 987 432', 'Carnívoro Xtreme', 35, 'www.carnivoroxtreme.com', 'Calle de la Barbacoa, 66', 'Parrillada de carnes con cortes premium y chimichurri casero.', 'carnivoroxtreme.jpg'),
+(12, 'EmpanadaPower', 'empanadapower@gmail.com', '$2b$12$yLdH8ZpXnj/yiplsY8wyh.EAYFLmH1ghb5VCyU.lXbWndCbuSNNce', '625 432 678', 'Empanada Power', 20, 'www.empanadapower.com', 'Calle del Horno, 3', 'Empanadas argentinas y venezolanas con variedad de rellenos.', 'empanadapower.jpg'),
+(13, 'VeggieLover', 'veggielover@gmail.com', '$2b$12$G3bCdCMUWtCJVwHZ46G1luieZnJRKa.flX9LPHbetoSlUGxBoO.ji', ' 681 210 654', 'Veggie Lover', 25, 'www.veggielover.com', 'Paseo Verde, 11', 'Cocina vegetariana con ingredientes frescos y orgánicos.', 'veggielover.jpg'),
+(14, 'ChocoLoco', 'chocoloco@gmail.com', '$2b$12$oUf90qNOxvg0zN/Evy1wSutwcDqX9VZr/6Tbbg8KW3m3v6CFsiqGS', '689 567 890', 'ChocoLoco', 15, 'www.chocoloco.com', ' Calle del Cacao, 50', 'Postres y bebidas de chocolate en todas sus formas.', 'chocoloco.jpg'),
+(15, 'PatataBrava', 'patatabrava@gmail.com', '$2b$12$QZGnKwQ/7XOcNcoqyn6mhuAidYlti/FQU1Snex52TFx2xDj6Bb3Py', '674 678 321', 'Patata Brava', 20, 'www.patatabrava.com', 'Avenida de las Tapas, 8', 'Especialidad en patatas bravas con salsas caseras.', 'patatabrava.jpg'),
+(16, 'Marisquito', 'marisquito@gmail.com', '$2b$12$.ko315AkJ//Xqyijaa2pbObBmZxAYvGSgK409gsElRCC0zAk1FF0e', '663 345 987', 'Marisquito', 35, 'www.marisquito.com', 'Paseo Marítimo, 17', 'Mariscos frescos y paellas con ingredientes de primera calidad.', 'marisquito.jpg'),
+(17, 'ArepaFest', 'arepafest@gmail.com', '$2b$12$7TXLFLEAIhMzCa21qrMAyuBBTBeOdVwJL.bj/67PWIQI7cPV10WhK', ' 611 789 234', 'Arepa Fest', 25, 'https://www.arepafest.com', 'Calle de la Harina, 22', ' Arepas rellenas al mejor estilo venezolano y colombiano.', 'arepafest.jpg'),
+(18, 'RolloPrimavera', 'rolloprimavera@gmail.com', '$2b$12$ErHvLb2lJ2mV3v2aVO9hCOs1ZyMx5bWkJJX6nIVC7dwUOe.koOxZ2', '648 654 789', 'Rollo Primavera', 30, 'www.rolloprimavera.com', 'Barrio Chino, 29', 'ocina asiática con especialidad en rollitos de primavera y dumplings.', 'rolloprimavera.jpg'),
+(19, 'TodoAlHorno', 'todoalhorno@gmail.com', '$2b$12$hsiO8pmRbzd/G7e6NR0PYOzk7HK7lkwc5eIsiaMylBVfPdLdN215S', '630 876 210', 'Todo al Horno', 40, ' www.todoalhorno.com', 'Calle del Fuego, 77', 'Platos cocinados al horno para una experiencia sin frituras.', 'todoalhorno.jpg'),
+(20, 'CucharaDeOro', 'cucharadeoro@gmail.com', '$2b$12$OjezuacEZf0Vk0xrV/V9DeDryFZogkHfmtq17QjqJPUkYkRJzkqKC', '679 543 876', 'Cuchara de Oro', 25, 'www.cucharadeoro.com', 'Calle de la Abuela, 6', 'Comida casera con recetas tradicionales y sopas abundantes.', 'cucharadeoro.jpg'),
+(31, 'Admin', 'adminrest@adminrest.com', '$2b$12$spFmCUXai29gSUGtJ917TObSqXtamTtiznSANxIOLmsvzsDNYAOHC', '986256987', 'ABC', 45, 'www.abc.com', 'Abecedario, 36', 'Comida con todas las letras.', 'aquitulogo-27.webp');
+
+-- --------------------------------------------------------
 --
 -- Estructura de tabla para la tabla `cuisine_type`
 --
@@ -66,7 +112,7 @@ CREATE TABLE IF NOT EXISTS `cuisine_type` (
   `cuisine_name` varchar(50) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`cuisine_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `cuisine_type`
@@ -132,56 +178,7 @@ INSERT INTO `reservation` (`reservation_id`, `client_id`, `restaurant_id`, `dine
 
 -- --------------------------------------------------------
 
---
--- Estructura de tabla para la tabla `restaurant`
---
-
-DROP TABLE IF EXISTS `restaurant`;
-CREATE TABLE IF NOT EXISTS `restaurant` (
-  `restaurant_id` int NOT NULL AUTO_INCREMENT,
-  `username` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `email` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `phone` varchar(15) COLLATE utf8mb4_general_ci NOT NULL,
-  `restaurant_name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `capacity` int NOT NULL,
-  `website` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `address` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `description` text COLLATE utf8mb4_general_ci,
-  `image` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  PRIMARY KEY (`restaurant_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `restaurant`
---
-
-INSERT INTO `restaurant` (`restaurant_id`, `username`, `email`, `password`, `phone`, `restaurant_name`, `capacity`, `website`, `address`, `description`, `image`) VALUES
-(1, 'ElReyDelBuffet ', 'elreydelbuffet@gmail.com', '$2b$12$GayWUl0kaswQoKBKla8xtO4vU1S4DfJyll1BAi/HZFkq/hE.lEVyC', '678 901 234', 'El Rey del Buffet', 40, 'www.reydelbuffet.com', 'Calle del Atracón, 12', 'Buffet libre con más de 100 platos, postres ilimitados y bebidas incluidas.', 'elreydelbuffet.jpg'),
-(2, 'TacoLcoco ', 'tacolcoco@gmail.com', '$2b$12$etyFl4lBbHztCrApxTQfsOLilAZ1CXiJUpX.NAcJ4nHer4Lal6lae', '612 345 678', 'Taco Locco', 30, 'www.tacolocco.com', 'Avenida Picante, 45', 'Auténtica comida mexicana, tacos al pastor y nachos con queso fundido.', 'tacoloco.jpg'),
-(3, 'FritangaVIP', 'fritangavip@gmail.com', '$2b$12$bbdvUtEK4nbZemOGQeANwu8kB6xdJ31YkHmh6RHEAgHU.d.wv7dyi', '645 789 123', 'Fritanga VIP', 25, 'www.fritangavip.com', 'Plaza del Aceite, 7', 'Especialidad en frituras de todo tipo, desde calamares hasta churros rellenos.', 'fritangavip.jpg'),
-(4, 'Pizzarollit0', 'pizzarolli0@gmail.com', '$2b$12$QkjT3JbNn9BgKQpZHWoFkORaW.HGdQLEWx0zh8sR1BsYLjC7s1yhq', '690 234 567', 'Pizzarollito', 35, 'www.pizzarollito.com', 'Calle de la Masa, 99', 'Pizzería artesanal con horno de leña y opciones veganas.', 'pizzarolito.jpg'),
-(5, 'HamburQueen', 'hamburqueen@gmail.com', '$2b$12$ueTa8wwQ6/oOsfmcGUjI4uE35xQeb/flqad69wqWK2wJomZaddb8e', '655 876 432', 'HamburQueen', 40, 'www.hamburqueen.com', 'Paseo del Sabor, 21', 'Hamburguesas gourmet con ingredientes premium y salsas caseras.', 'hamburqueen.jpg'),
-(6, 'ComeQueTeVas', 'comequetevas@gmail.com', '$2b$12$Rbu2StmZbyxJGWLN..SLEu0c58/fCVdrnaV2xAKcZzlLryHsizzuO', ' 687 321 098', 'Come Que Te Vas', 20, 'www.comequetevas.com', 'Camino del Hambre, 5', 'Menús rápidos para los que tienen prisa, sin perder sabor.', 'comequetevas.jpg'),
-(7, 'SushiMunchies', 'sushimunchies@gmail.com', '$2b$12$TM1vlnYIiYvPSOXeD9son.pOU.2dfWTnveltwDHv/7Ja4YlP/j8Be', '620 654 321', 'Sushi Munchies', 30, 'www.sushimunchies.com', 'Calle de la Soja, 10', 'Sushi fusión con opciones innovadoras y sabores únicos.', 'sushimunchies.jpg'),
-(8, 'GordiPasta', 'gordipasta@gmail.com', '$2b$12$8zPWG7a30nQWGWgJeVuee.7qoRvkVSFOrMGAKKv11po0tsBs2gGpq', '699 210 876', 'GordiPasta', 25, 'www.gordipasta.com', 'Avenida Italiana, 88', 'Pastas caseras con salsas abundantes y pan de ajo ilimitado.', 'gordipasta.jpg'),
-(9, 'WokAndRoll', 'wokandroll@gmail.com', '$2b$12$/MxUnez8Yyfhq3.zGrvqi.9K/jOKU.mIdxEdQVBVgcHT3P.tW33ly', '635 543 210', 'Wok & Roll', 30, 'www.wokandroll.com', 'Calle del Dragón, 23', 'Cocina asiática al wok con ingredientes frescos y show en vivo.', 'wokandroll.jpg'),
-(10, 'PollosLocos', 'polloslocos@gmail.com', '$2b$12$gmJiiUwrP/H7VPwlN3l0qu/bnF4KMmcacHILGt2z07wLzpN9PK0Te', '670 876 543', 'Pollos Locos', 40, 'www.polloslocos.com', ' Plaza del Asador, 14', 'Especialistas en pollo frito crujiente y salsas caseras.', 'polloslocos.jpg'),
-(11, 'CarnivoroXtreme', 'carnivoroextreme@gmail.com', '$2b$12$qa6mGPG0IdSOLiyh/V0UjuOZkoxb1FYGhn8rXUup1RF6qhmbjAG3K', '658 987 432', 'Carnívoro Xtreme', 35, 'www.carnivoroxtreme.com', 'Calle de la Barbacoa, 66', 'Parrillada de carnes con cortes premium y chimichurri casero.', 'carnivoroxtreme.jpg'),
-(12, 'EmpanadaPower', 'empanadapower@gmail.com', '$2b$12$yLdH8ZpXnj/yiplsY8wyh.EAYFLmH1ghb5VCyU.lXbWndCbuSNNce', '625 432 678', 'Empanada Power', 20, 'www.empanadapower.com', 'Calle del Horno, 3', 'Empanadas argentinas y venezolanas con variedad de rellenos.', 'empanadapower.jpg'),
-(13, 'VeggieLover', 'veggielover@gmail.com', '$2b$12$G3bCdCMUWtCJVwHZ46G1luieZnJRKa.flX9LPHbetoSlUGxBoO.ji', ' 681 210 654', 'Veggie Lover', 25, 'www.veggielover.com', 'Paseo Verde, 11', 'Cocina vegetariana con ingredientes frescos y orgánicos.', 'veggielover.jpg'),
-(14, 'ChocoLoco', 'chocoloco@gmail.com', '$2b$12$oUf90qNOxvg0zN/Evy1wSutwcDqX9VZr/6Tbbg8KW3m3v6CFsiqGS', '689 567 890', 'ChocoLoco', 15, 'www.chocoloco.com', ' Calle del Cacao, 50', 'Postres y bebidas de chocolate en todas sus formas.', 'chocoloco.jpg'),
-(15, 'PatataBrava', 'patatabrava@gmail.com', '$2b$12$QZGnKwQ/7XOcNcoqyn6mhuAidYlti/FQU1Snex52TFx2xDj6Bb3Py', '674 678 321', 'Patata Brava', 20, 'www.patatabrava.com', 'Avenida de las Tapas, 8', 'Especialidad en patatas bravas con salsas caseras.', 'patatabrava.jpg'),
-(16, 'Marisquito', 'marisquito@gmail.com', '$2b$12$.ko315AkJ//Xqyijaa2pbObBmZxAYvGSgK409gsElRCC0zAk1FF0e', '663 345 987', 'Marisquito', 35, 'www.marisquito.com', 'Paseo Marítimo, 17', 'Mariscos frescos y paellas con ingredientes de primera calidad.', 'marisquito.jpg'),
-(17, 'ArepaFest', 'arepafest@gmail.com', '$2b$12$7TXLFLEAIhMzCa21qrMAyuBBTBeOdVwJL.bj/67PWIQI7cPV10WhK', ' 611 789 234', 'Arepa Fest', 25, 'https://www.arepafest.com', 'Calle de la Harina, 22', ' Arepas rellenas al mejor estilo venezolano y colombiano.', 'arepafest.jpg'),
-(18, 'RolloPrimavera', 'rolloprimavera@gmail.com', '$2b$12$ErHvLb2lJ2mV3v2aVO9hCOs1ZyMx5bWkJJX6nIVC7dwUOe.koOxZ2', '648 654 789', 'Rollo Primavera', 30, 'www.rolloprimavera.com', 'Barrio Chino, 29', 'ocina asiática con especialidad en rollitos de primavera y dumplings.', 'rolloprimavera.jpg'),
-(19, 'TodoAlHorno', 'todoalhorno@gmail.com', '$2b$12$hsiO8pmRbzd/G7e6NR0PYOzk7HK7lkwc5eIsiaMylBVfPdLdN215S', '630 876 210', 'Todo al Horno', 40, ' www.todoalhorno.com', 'Calle del Fuego, 77', 'Platos cocinados al horno para una experiencia sin frituras.', 'todoalhorno.jpg'),
-(20, 'CucharaDeOro', 'cucharadeoro@gmail.com', '$2b$12$OjezuacEZf0Vk0xrV/V9DeDryFZogkHfmtq17QjqJPUkYkRJzkqKC', '679 543 876', 'Cuchara de Oro', 25, 'www.cucharadeoro.com', 'Calle de la Abuela, 6', 'Comida casera con recetas tradicionales y sopas abundantes.', 'cucharadeoro.jpg'),
-(31, 'Admin', 'adminrest@adminrest.com', '$2b$12$spFmCUXai29gSUGtJ917TObSqXtamTtiznSANxIOLmsvzsDNYAOHC', '986256987', 'ABC', 45, 'www.abc.com', 'Abecedario, 36', 'Comida con todas las letras.', 'aquitulogo-27.webp');
-
--- --------------------------------------------------------
-
---
+----
 -- Estructura de tabla para la tabla `restaurant_cuisine`
 --
 
@@ -191,7 +188,7 @@ CREATE TABLE IF NOT EXISTS `restaurant_cuisine` (
   `cuisine_id` int NOT NULL,
   PRIMARY KEY (`restaurant_id`,`cuisine_id`),
   KEY `cuisine_id` (`cuisine_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `restaurant_cuisine`

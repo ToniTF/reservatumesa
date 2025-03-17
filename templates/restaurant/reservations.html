@@ -30,13 +30,15 @@
     <div class="container page-transition">
         <!-- Encabezado con botones a la derecha -->
         <div class="row mb-4">
-            <div class="col-12 text-end">
-                <a href="/restaurant/edit_profile" class="btn back-btn me-2">
-                    <i class="bi bi-shop-window"></i> Editar Restaurante
-                </a>
-                <a href="/logout_restaurant" class="btn button-pulse logout-btn">
-                    <i class="bi bi-box-arrow-right"></i> Cerrar Cocina
-                </a>
+            <div class="col-12">
+                <div class="d-flex justify-content-end">
+                    <a href="/restaurant/edit_profile" class="btn back-btn me-2">
+                        <i class="bi bi-shop-window"></i> Editar Restaurante
+                    </a>
+                    <a href="/logout_restaurant" class="btn button-pulse logout-btn">
+                        <i class="bi bi-box-arrow-right"></i> Cerrar Cocina
+                    </a>
+                </div>
             </div>
         </div>
         
@@ -46,111 +48,40 @@
                 
                 <!-- Selección de fecha -->
                 <div class="row justify-content-left mb-5">
-                    <div class="col-md-6">
-                        <form action="/restaurant/reservations/" method="get" id="date-form" style="margin: 0!important;">
-                            <div class="date-selector mb-3">
-                                <div class="input-group">
-                                    <input type="date" name="date" class="form-control" value="{{ selected_date }}" required>
-                                </div>
-                            </div>
-                            
-                            <!-- Botones dentro del formulario con mejor estructura -->
-                            <div class="d-flex justify-content-center gap-3">
-                                <button type="button" id="viewReservationsBtn" class="btn button-pulse">
-                                    <i class="bi bi-calendar-check"></i><span>Reservas</span>
-                                </button>
-                                <button type="button" id="viewCalendarBtn" class="btn button-pulse">
-                                    <i class="bi bi-calendar3"></i><span>Calendario</span>
-                                </button>
-                                <a href="/restaurant" class="btn button-pulse">
-                                    <i class="bi bi-list-check"></i><span>Todas</span>
-                                </a>
-                            </div>
-                        </form>
-                        <!-- Añade este div después del formulario de fecha pero antes de la tabla -->
-                        <div id="dateWarning" class="alert alert-warning date-warning" style="display: none; margin-top: 10px;">
-                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                            Por favor, selecciona una fecha primero.
-                        </div>
-                        <script>
-                            // Verificar si hay una fecha seleccionada al cargar la página
-                            document.addEventListener('DOMContentLoaded', function() {
-                                const dateInput = document.querySelector('input[name="date"]');
-                                const viewReservationsBtn = document.getElementById('viewReservationsBtn');
-                                const viewCalendarBtn = document.getElementById('viewCalendarBtn');
-                                const dateWarning = document.getElementById('dateWarning');
-                                
-                                // Función para actualizar el estado visual de los botones
-                                function updateButtonStates() {
-                                    if (!dateInput.value) {
-                                        // Añadir solo la clase visual pero no la clase disabled real
-                                        viewReservationsBtn.classList.add('visually-disabled');
-                                        viewCalendarBtn.classList.add('visually-disabled');
-                                        
-                                        // Asignar manejadores de eventos específicos para cuando están deshabilitados
-                                        viewReservationsBtn.onclick = showDateNeededMessage;
-                                        viewCalendarBtn.onclick = showDateNeededMessage;
-                                    } else {
-                                        // Cuando hay fecha, quitar la clase visual y restaurar el comportamiento normal
-                                        viewReservationsBtn.classList.remove('visually-disabled');
-                                        viewCalendarBtn.classList.remove('visually-disabled');
-                                        
-                                        // Restaurar las funciones originales
-                                        viewReservationsBtn.onclick = navigateToDate;
-                                        viewCalendarBtn.onclick = navigateToCalendar;
-                                        
-                                        // Ocultar el mensaje de advertencia si estaba visible
-                                        dateWarning.style.display = 'none';
-                                    }
-                                }
-                                
-                                // Función que muestra el mensaje de advertencia
-                                function showDateNeededMessage(event) {
-                                    event.preventDefault();
-                                    
-                                    // Mostrar el mensaje de advertencia
-                                    dateWarning.style.display = 'block';
-                                    
-                                    // Aplicar animación para llamar la atención
-                                    dateWarning.classList.add('shake-animation');
-                                    
-                                    // Después de un tiempo, quitar la animación
-                                    setTimeout(() => {
-                                        dateWarning.classList.remove('shake-animation');
-                                    }, 500);
-                                    
-                                    // Enfocar el campo de fecha
-                                    dateInput.focus();
-                                    
-                                    return false;
-                                }
-                                
-                                // Actualizar el estado inicial
-                                updateButtonStates();
-                                
-                                // Actualizar el estado cuando cambie la fecha
-                                dateInput.addEventListener('change', updateButtonStates);
-                            });
-
-                            function navigateToDate() {
-                                const dateInput = document.querySelector('input[name="date"]');
-                                const selectedDate = dateInput.value;
-                                if (selectedDate) {
-                                    window.location.href = `/restaurant/reservations/${selectedDate}`;
-                                }
-                            }
-                            
-                            function navigateToCalendar() {
-                                const dateInput = document.querySelector('input[name="date"]');
-                                const selectedDate = dateInput.value;
-                                if (selectedDate) {
-                                    window.location.href = `/restaurant?date=${selectedDate}`;
-                                }
-                            }
-                        </script>
-                    </div>
-
+    <!-- Columna izquierda: Formulario de fecha y botones -->
+    <div class="col-md-6">
+        <form action="/restaurant/reservations/" method="get" id="date-form" style="margin: 0!important;">
+            <div class="date-selector mb-3">
+                <div class="input-group">
+                    <input type="date" name="date" class="form-control" value="{{ selected_date }}" required>
                 </div>
+            </div>
+            
+            <!-- Botones dentro del formulario con mejor estructura -->
+            <div class="d-flex justify-content-center gap-3">
+                <button type="button" id="viewReservationsBtn" class="btn button-pulse">
+                    <i class="bi bi-calendar-check"></i><span>Reservas</span>
+                </button>
+                <button type="button" id="viewCalendarBtn" class="btn button-pulse">
+                    <i class="bi bi-calendar3"></i><span>Calendario</span>
+                </button>
+                <a href="/restaurant" class="btn button-pulse">
+                    <i class="bi bi-list-check"></i><span>Todas</span>
+                </a>
+            </div>
+        </form>
+        <!-- Div de advertencia para la fecha -->
+        <div id="dateWarning" class="alert alert-warning date-warning" style="display: none; margin-top: 10px;">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            Por favor, selecciona una fecha primero.
+        </div>
+    </div>
+    
+    <!-- Columna derecha: Imagen del restaurante -->
+    <div class="col-md-6 text-center">
+        <img src="{{ url_for('static', filename='img/' + restaurant.image) }}" alt="Imagen del restaurante" class="img-fluid" style="max-height:300px;">
+    </div>
+</div>
                 
                 {% if reservations %}
                     <div class="table-responsive">

@@ -24,6 +24,7 @@
             flex-wrap: wrap;
             gap: 6px; /* Reducir el gap para más elementos por línea */
             width: 100%;
+            flex-grow: 1;
         }
         
         .cuisine-tags {
@@ -37,6 +38,9 @@
         /* Nuevo estilo para que el formulario ocupe todo el ancho */
         #filter-form {
             width: 100%;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         /* Hacer los checkboxes más compactos */
@@ -69,6 +73,7 @@
         
         .card-body {
             background-color: rgba(255, 255, 255, 0.05);
+            padding: 8px !important; /* Sobrescribir cualquier otra regla de padding */
         }
         
         @media (max-width: 576px) {
@@ -80,6 +85,64 @@
                 margin-right: 0;
                 flex-basis: calc(50% - 6px); /* 2 por fila en móviles */
             }
+        }
+    </style>
+    <style>
+        /* Asegurar que el formulario ocupe todo el ancho disponible */
+        .card-body {
+            padding: 0 !important; /* Quitar padding del card-body */
+        }
+        
+        #filter-form {
+            width: 100%;
+            display: block;
+            padding: 8px 0;
+        }
+        
+        .cuisine-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            width: 100%;
+            padding-bottom: 8px;
+        }
+        
+        /* Espaciado interno para los elementos dentro del formulario */
+        .px-2 {
+            padding-left: 8px !important;
+            padding-right: 8px !important;
+        }
+    </style>
+    <style>
+        /* Desactivar el pseudo-elemento ::before para el filtro */
+        #filter-form::before {
+            display: none;
+        }
+        
+        /* Asegurarte de que el formulario ocupe el 100% */
+        #filter-form {
+            width: 100%;
+            margin: 0;
+            padding: 8px 0;
+            box-sizing: border-box;
+        }
+    </style>
+    <style>
+        /* Aseguramos que el padre (card-body) ocupe el 100% sin padding extra */
+        .card-body {
+            padding: 0 !important;
+            margin: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Forzamos que el formulario ocupe el 100% de su contenedor */
+        #filter-form {
+            width: 100% !important;
+            max-width: none;
+            margin: 0;
+            padding: 8px 0;
+            box-sizing: border-box;
         }
     </style>
 </head>
@@ -118,32 +181,28 @@
             <div class="col-md-10">
                 <h1 class="text-center mb-5">Lista de restaurantes</h1>
 
-                <!-- Reemplaza todo el bloque del filtro por este código más simplificado -->
-                <div class="card mb-4">
-                    <div class="card-body p-2"> <!-- Reducir el padding general -->
-                        <form action="{{ url_for('userhome') }}" method="GET" id="filter-form" class="w-100">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <small class="text-muted"><i class="bi bi-funnel"></i> Filtros</small>
-                                <button type="button" class="btn btn-sm btn-outline-secondary" id="clear-filters">
-                                    Limpiar
-                                </button>
-                            </div>
-                            <div class="cuisine-filters">
-                                {% for cuisine in cuisine_types %}
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="cuisine_ids" 
-                                           id="cuisine{{ cuisine.cuisine_id }}" value="{{ cuisine.cuisine_id }}"
-                                           {% if cuisine.cuisine_id|string in selected_cuisines %} checked {% endif %}
-                                           onchange="document.getElementById('filter-form').submit();">
-                                    <label class="form-check-label" for="cuisine{{ cuisine.cuisine_id }}">
-                                        {{ cuisine.cuisine_name }}
-                                    </label>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </form>
+                <!-- Filtro sin usar card -->
+                <form action="{{ url_for('userhome') }}" method="GET" id="filter-form" class="w-100" style="padding: 8px 0; box-sizing: border-box;">
+                    <div class="d-flex justify-content-between align-items-center mb-2 px-2">
+                        <small class="text-muted"><i class="bi bi-funnel"></i> Filtros</small>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" id="clear-filters">
+                            Limpiar
+                        </button>
                     </div>
-                </div>
+                    <div class="cuisine-filters px-2">
+                        {% for cuisine in cuisine_types %}
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="cuisine_ids" 
+                                   id="cuisine{{ cuisine.cuisine_id }}" value="{{ cuisine.cuisine_id }}"
+                                   {% if cuisine.cuisine_id|string in selected_cuisines %} checked {% endif %}
+                                   onchange="document.getElementById('filter-form').submit();">
+                            <label class="form-check-label" for="cuisine{{ cuisine.cuisine_id }}">
+                                {{ cuisine.cuisine_name }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </form>
 
                 <!-- Botón Mis Reservas -->
                 <div class="text-center mb-4">
@@ -152,14 +211,12 @@
                     </a>
                 </div>
 
+                <!-- Continuación con la lista de restaurantes -->
                 <div class="restaurant-list">
                     {% for restaurant in restaurants %}
-                    <div class="restaurant-item" {% if restaurant.image
-                        %}style="background-image: url('{{ url_for('static', filename='img/' + restaurant.image) }}'); background-size: cover; background-position: center;"
-                        {% endif %}>
+                    <div class="restaurant-item" {% if restaurant.image %}style="background-image: url('{{ url_for('static', filename='img/' + restaurant.image) }}'); background-size: cover; background-position: center;"{% endif %}>
                         <div class="restaurant-content">
                             <h3>{{ restaurant.restaurant_name }}</h3>
-                            <!-- Mostrar los tipos de cocina del restaurante -->
                             {% if restaurant.cuisine_types %}
                             <div class="cuisine-tags mb-2">
                                 {% for cuisine in restaurant.cuisine_types %}

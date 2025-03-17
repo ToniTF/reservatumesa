@@ -55,9 +55,6 @@ INSERT INTO `client` (`client_id`, `username`, `password`, `email`, `phone`) VAL
 (18, 'Toni', '$2b$12$TzLs44p.z1sPuOfLriJQ7.6L1NYEcwWMd/Y0A0g2uCZY5re1zvGGm', 'admin@admin.es', '986458784');
 
 -- --------------------------------------------------------
-
-
---
 -- Estructura de tabla para la tabla `restaurant`
 --
 
@@ -104,8 +101,7 @@ INSERT INTO `restaurant` (`restaurant_id`, `username`, `email`, `password`, `pho
 (20, 'CucharaDeOro', 'cucharadeoro@gmail.com', '$2b$12$OjezuacEZf0Vk0xrV/V9DeDryFZogkHfmtq17QjqJPUkYkRJzkqKC', '679 543 876', 'Cuchara de Oro', 25, 'www.cucharadeoro.com', 'Calle de la Abuela, 6', 'Comida casera con recetas tradicionales y sopas abundantes.', 'cucharadeoro.jpg'),
 (31, 'Admin', 'adminrest@adminrest.com', '$2b$12$spFmCUXai29gSUGtJ917TObSqXtamTtiznSANxIOLmsvzsDNYAOHC', '986256987', 'ABC', 45, 'www.abc.com', 'Abecedario, 36', 'Comida con todas las letras.', 'aquitulogo-27.webp');
 
-
-
+-- --------------------------------------------------------
 --
 -- Estructura de tabla para la tabla `cuisine_type`
 --
@@ -113,8 +109,8 @@ INSERT INTO `restaurant` (`restaurant_id`, `username`, `email`, `password`, `pho
 DROP TABLE IF EXISTS `cuisine_type`;
 CREATE TABLE IF NOT EXISTS `cuisine_type` (
   `cuisine_id` int NOT NULL AUTO_INCREMENT,
-  `cuisine_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `cuisine_name` varchar(50) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`cuisine_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -154,6 +150,35 @@ INSERT INTO `cuisine_type` (`cuisine_id`, `cuisine_name`, `description`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `reservation`
+--
+
+DROP TABLE IF EXISTS `reservation`;
+CREATE TABLE IF NOT EXISTS `reservation` (
+  `reservation_id` int NOT NULL AUTO_INCREMENT,
+  `client_id` int NOT NULL,
+  `restaurant_id` int NOT NULL,
+  `diners` int NOT NULL,
+  `date` date NOT NULL,
+  `time` time NOT NULL,
+  `status` enum('pendiente','confirmada','cancelada') COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`reservation_id`),
+  KEY `client_id` (`client_id`),
+  KEY `restaurant_id` (`restaurant_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `reservation`
+--
+
+INSERT INTO `reservation` (`reservation_id`, `client_id`, `restaurant_id`, `diners`, `date`, `time`, `status`) VALUES
+(22, 18, 31, 2, '2025-03-17', '20:30:00', ''),
+(23, 18, 31, 4, '2025-03-18', '13:00:00', ''),
+(24, 18, 31, 6, '2025-03-26', '13:30:00', '');
+
+-- --------------------------------------------------------
+
+----
 -- Estructura de tabla para la tabla `restaurant_cuisine`
 --
 

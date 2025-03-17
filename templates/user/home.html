@@ -22,7 +22,8 @@
         .cuisine-filters {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 6px; /* Reducir el gap para más elementos por línea */
+            width: 100%;
         }
         
         .cuisine-tags {
@@ -31,6 +32,54 @@
         
         .cuisine-tags .badge {
             font-size: 0.75rem;
+        }
+        
+        /* Nuevo estilo para que el formulario ocupe todo el ancho */
+        #filter-form {
+            width: 100%;
+        }
+        
+        /* Hacer los checkboxes más compactos */
+        .form-check-inline {
+            display: inline-flex;
+            margin: 0;
+            padding: 2px 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        
+        .form-check-inline:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .form-check-input {
+            margin-right: 4px;
+        }
+        
+        .form-check-label {
+            font-size: 0.8rem; /* Texto más pequeño */
+        }
+        
+        /* Estilo para checkboxes marcados */
+        .form-check-input:checked + .form-check-label {
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+        
+        .card-body {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        @media (max-width: 576px) {
+            .cuisine-filters {
+                flex-direction: row; /* Mantener la dirección en row incluso en móviles */
+            }
+            
+            .form-check-inline {
+                margin-right: 0;
+                flex-basis: calc(50% - 6px); /* 2 por fila en móviles */
+            }
         }
     </style>
 </head>
@@ -69,12 +118,17 @@
             <div class="col-md-10">
                 <h1 class="text-center mb-5">Lista de restaurantes</h1>
 
-                <!-- Añadir el filtro de búsqueda por tipo de cocina -->
+                <!-- Reemplaza todo el bloque del filtro por este código más simplificado -->
                 <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="bi bi-funnel"></i> Filtrar por tipo de cocina</h5>
-                        <form action="{{ url_for('userhome') }}" method="GET" id="filter-form">
-                            <div class="cuisine-filters mb-3">
+                    <div class="card-body p-2"> <!-- Reducir el padding general -->
+                        <form action="{{ url_for('userhome') }}" method="GET" id="filter-form" class="w-100">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <small class="text-muted"><i class="bi bi-funnel"></i> Filtros</small>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="clear-filters">
+                                    Limpiar
+                                </button>
+                            </div>
+                            <div class="cuisine-filters">
                                 {% for cuisine in cuisine_types %}
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="checkbox" name="cuisine_ids" 
@@ -86,11 +140,6 @@
                                     </label>
                                 </div>
                                 {% endfor %}
-                            </div>
-                            <div class="text-end">
-                                <button type="button" class="btn btn-sm btn-outline-secondary" id="clear-filters">
-                                    Limpiar filtros
-                                </button>
                             </div>
                         </form>
                     </div>
